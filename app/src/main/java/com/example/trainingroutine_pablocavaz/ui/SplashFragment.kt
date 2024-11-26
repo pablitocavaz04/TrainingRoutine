@@ -7,26 +7,23 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.example.trainingroutine_pablocavaz.R
-import androidx.fragment.app.commit
-
-
 
 class SplashFragment : Fragment() {
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
+        inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_splash, container, false)
+        return inflater.inflate(R.layout.fragment_splash, container, false)
+    }
 
-        // Opcional: Configurar un retraso para pasar al siguiente fragmento
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        // Navegar al LoginFragment después de un retraso
         Handler(Looper.getMainLooper()).postDelayed({
-            parentFragmentManager.commit {
-                replace(R.id.container,LoginFragment())
-            }
-        }, 3000) // Retraso de 3 segundos
-
-        return view
+            findNavController().navigate(R.id.action_splashFragment_to_loginFragment)
+        }, 3000) // 3 segundos de retraso
     }
 }

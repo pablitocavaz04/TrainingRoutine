@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:startDestination="@id/splashFragment">
+
+    <fragment
+        android:id="@+id/splashFragment"
+        android:name="com.example.trainingroutine_pablocavaz.ui.SplashFragment"
+        android:label="Splash Screen">
+        <action
+            android:id="@+id/action_splashFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.example.trainingroutine_pablocavaz.ui.LoginFragment"
+        android:label="Login Screen">
+        <action
+            android:id="@+id/action_loginFragment_to_registerFragment"
+            app:destination="@id/registerFragment" />
+        <action
+            android:id="@+id/action_loginFragment_to_sesionesFragment"
+            app:destination="@id/sesionesFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/registerFragment"
+        android:name="com.example.trainingroutine_pablocavaz.ui.RegisterFragment"
+        android:label="Register Screen">
+        <action
+            android:id="@+id/action_registerFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/sesionesFragment"
+        android:name="com.example.trainingroutine_pablocavaz.ui.SesionesFragment"
+        android:label="Sesiones Screen" />
+</navigation>

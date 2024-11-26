@@ -4,27 +4,34 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.commit
+import androidx.navigation.fragment.findNavController
 import com.example.trainingroutine_pablocavaz.R
+import com.example.trainingroutine_pablocavaz.databinding.FragmentLoginBinding
 
 class LoginFragment : Fragment() {
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        val view = inflater.inflate(R.layout.fragment_login, container, false)
+    private var _binding: FragmentLoginBinding? = null
+    private val binding get() = _binding!!
 
-        // Listener para ir al RegisterFragment
-        view.findViewById<TextView>(R.id.tvRegister).setOnClickListener {
-            parentFragmentManager.commit {
-                replace(R.id.container, RegisterFragment())
-                addToBackStack(null) // Añade a la pila para volver atrás
-            }
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentLoginBinding.inflate(inflater, container, false)
+
+        binding.btnLogin.setOnClickListener {
+            findNavController().navigate(R.id.action_loginFragment_to_sesionesFragment)
         }
 
-        return view
+        binding.tvRegister.setOnClickListener {
+            findNavController().navigate(R.id.action_loginFragment_to_registerFragment)
+        }
+
+        return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }
