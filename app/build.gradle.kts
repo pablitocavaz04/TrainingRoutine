@@ -40,6 +40,8 @@ android {
 }
 
 dependencies {
+    implementation (libs.androidx.navigation.ui.ktx.v274)
+    implementation (libs.androidx.navigation.fragment.ktx.v274)
     //Navigation
     implementation(libs.androidx.navigation.fragment.ktx)
     //Fragment
@@ -52,6 +54,7 @@ dependencies {
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.navigation.ui.ktx)
+    //Testting Libraries
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
