@@ -46,6 +46,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getUserRole(): String {
-        return "Entrenador"
+        return "Jugador"
     }
 }

@@ -36,5 +36,22 @@
     <fragment
         android:id="@+id/sesionesFragment"
         android:name="com.example.trainingroutine_pablocavaz.ui.SesionesFragment"
-        android:label="Sesiones Screen" />
+        android:label="Sesiones Screen">
+        <action
+            android:id="@+id/action_sesionesFragment_to_entrenamientosFragment"
+            app:destination="@id/entrenamientosFragment" />
+        <action
+            android:id="@+id/action_sesionesFragment_to_jugadoresFragment"
+            app:destination="@id/jugadoresFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/entrenamientosFragment"
+        android:name="com.example.trainingroutine_pablocavaz.ui.EntrenamientosFragment"
+        android:label="Entrenamientos Screen" />
+
+    <fragment
+        android:id="@+id/jugadoresFragment"
+        android:name="com.example.trainingroutine_pablocavaz.ui.JugadoresFragment"
+        android:label="Jugadores Screen" />
 </navigation>
