@@ -43,6 +43,9 @@
         <action
             android:id="@+id/action_sesionesFragment_to_jugadoresFragment"
             app:destination="@id/jugadoresFragment" />
+        <action
+            android:id="@+id/action_sesionesFragment_to_crearSesionFragment"
+            app:destination="@id/crearSesionFragment" />
     </fragment>
 
     <fragment
@@ -54,4 +57,9 @@
         android:id="@+id/jugadoresFragment"
         android:name="com.example.trainingroutine_pablocavaz.ui.JugadoresFragment"
         android:label="Jugadores Screen" />
+
+    <fragment
+        android:id="@+id/crearSesionFragment"
+        android:name="com.example.trainingroutine_pablocavaz.ui.CrearSesionFragment"
+        android:label="Crear Sesión Screen" />
 </navigation>

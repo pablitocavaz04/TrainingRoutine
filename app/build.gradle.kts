@@ -52,7 +52,7 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.androidx.activity)
-    implementation(libs.androidx.constraintlayout)
+    implementation (libs.androidx.constraintlayout)
     implementation(libs.androidx.navigation.ui.ktx)
     //Testting Libraries
     testImplementation(libs.junit)

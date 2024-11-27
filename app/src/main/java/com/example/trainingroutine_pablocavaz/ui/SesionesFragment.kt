@@ -4,9 +4,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.trainingroutine_pablocavaz.R
 import com.example.trainingroutine_pablocavaz.databinding.FragmentSesionesBinding
 import com.example.trainingroutine_pablocavaz.data.adapters.SesionAdapter
 import com.example.trainingroutine_pablocavaz.data.adapters.Sesion
@@ -21,7 +22,7 @@ class SesionesFragment : Fragment() {
         Sesion("Sesión 2", "Entrenamiento B", "Entrenador Y")
     )
 
-    private val userRole = "Entrenador" // Cambiar a "Jugador" para pruebas
+    private val userRole = "Entrenador" ///////////////////////////
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -39,7 +40,7 @@ class SesionesFragment : Fragment() {
         if (userRole == "Entrenador") {
             binding.fabCrearSesion.visibility = View.VISIBLE
             binding.fabCrearSesion.setOnClickListener {
-                Toast.makeText(requireContext(), "Crear sesión presionado", Toast.LENGTH_SHORT).show()
+                findNavController().navigate(R.id.action_sesionesFragment_to_crearSesionFragment)
             }
         }
     }
