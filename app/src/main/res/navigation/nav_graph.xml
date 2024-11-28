@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     app:startDestination="@id/splashFragment">
 
+    <!-- Splash -->
     <fragment
         android:id="@+id/splashFragment"
         android:name="com.example.trainingroutine_pablocavaz.data.ui.SplashFragment"
@@ -12,6 +13,7 @@
             app:destination="@id/loginFragment" />
     </fragment>
 
+    <!-- Login -->
     <fragment
         android:id="@+id/loginFragment"
         android:name="com.example.trainingroutine_pablocavaz.data.ui.LoginFragment"
@@ -24,6 +26,7 @@
             app:destination="@id/sesionesFragment" />
     </fragment>
 
+    <!-- Register -->
     <fragment
         android:id="@+id/registerFragment"
         android:name="com.example.trainingroutine_pablocavaz.data.ui.RegisterFragment"
@@ -33,6 +36,7 @@
             app:destination="@id/loginFragment" />
     </fragment>
 
+    <!-- Sesiones -->
     <fragment
         android:id="@+id/sesionesFragment"
         android:name="com.example.trainingroutine_pablocavaz.data.ui.SesionesFragment"
@@ -48,24 +52,32 @@
             app:destination="@id/crearSesionFragment" />
     </fragment>
 
+    <!-- Entrenamientos -->
     <fragment
         android:id="@+id/entrenamientosFragment"
         android:name="com.example.trainingroutine_pablocavaz.data.ui.EntrenamientosFragment"
         android:label="Entrenamientos Screen" />
 
+    <!-- Jugadores -->
     <fragment
         android:id="@+id/jugadoresFragment"
         android:name="com.example.trainingroutine_pablocavaz.data.ui.JugadoresFragment"
         android:label="Jugadores Screen" />
 
+    <!-- Crear Sesión -->
     <fragment
         android:id="@+id/crearSesionFragment"
         android:name="com.example.trainingroutine_pablocavaz.data.ui.CrearSesionFragment"
         android:label="Crear Sesión Screen" />
 
-    <!-- Agregar fragmento para perfil de usuario -->
+    <!-- User Profile -->
     <fragment
         android:id="@+id/userProfileFragment"
         android:name="com.example.trainingroutine_pablocavaz.data.ui.UserProfileFragment"
-        android:label="Perfil del Usuario" />
+        android:label="Perfil">
+        <action
+            android:id="@+id/action_userProfileFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
+    </fragment>
+
 </navigation>

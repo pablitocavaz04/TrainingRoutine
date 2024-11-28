@@ -24,6 +24,6 @@ class SplashFragment : Fragment() {
         // Navegar al LoginFragment después de un retraso
         Handler(Looper.getMainLooper()).postDelayed({
             findNavController().navigate(R.id.action_splashFragment_to_loginFragment)
-        }, 3000) // 3 segundos de retraso
+        }, 4000) // 3 segundos de retraso
     }
 }
