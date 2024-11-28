@@ -33,7 +33,7 @@ class MainActivity : AppCompatActivity() {
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         navController = navHostFragment.navController
 
-        // Mostrar ocultar el BottomNavigationView el rol del usuario
+        // Mostrar ocultar el BottomNavigationView dependiendo del rol del usuario
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
                 R.id.splashFragment, R.id.loginFragment, R.id.registerFragment -> {
@@ -58,6 +58,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getUserRole(): String {
-        return "Entrenador" // Cambiar a "Entrenador" para mostrar la lista de jugadores
+        return "Jugador" // Cambiar a "Entrenador" para mostrar la lista de jugadores
     }
 }

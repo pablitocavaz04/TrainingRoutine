@@ -1,4 +1,4 @@
-package com.example.trainingroutine_pablocavaz.ui
+package com.example.trainingroutine_pablocavaz.data.ui
 
 import android.os.Bundle
 import android.view.View

@@ -1,4 +1,4 @@
-package com.example.trainingroutine_pablocavaz.ui
+package com.example.trainingroutine_pablocavaz.data.ui
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -22,7 +22,7 @@ class SesionesFragment : Fragment() {
         Sesion("Sesión 2", "Entrenamiento B", "Entrenador Y")
     )
 
-    private val userRole = "Entrenador" ///////////////////////////
+    private val userRole = "Jugador" ///////////////////////////
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

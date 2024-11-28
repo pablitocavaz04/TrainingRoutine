@@ -5,13 +5,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.CrearSesionFragment">
+    tools:context=".data.ui.CrearSesionFragment">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:title="Crear Sesión"
+        android:background="?attr/colorPrimary"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

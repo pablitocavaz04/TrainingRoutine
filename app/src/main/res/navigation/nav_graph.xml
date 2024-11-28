@@ -5,7 +5,7 @@
 
     <fragment
         android:id="@+id/splashFragment"
-        android:name="com.example.trainingroutine_pablocavaz.ui.SplashFragment"
+        android:name="com.example.trainingroutine_pablocavaz.data.ui.SplashFragment"
         android:label="Splash Screen">
         <action
             android:id="@+id/action_splashFragment_to_loginFragment"
@@ -14,7 +14,7 @@
 
     <fragment
         android:id="@+id/loginFragment"
-        android:name="com.example.trainingroutine_pablocavaz.ui.LoginFragment"
+        android:name="com.example.trainingroutine_pablocavaz.data.ui.LoginFragment"
         android:label="Login Screen">
         <action
             android:id="@+id/action_loginFragment_to_registerFragment"
@@ -26,7 +26,7 @@
 
     <fragment
         android:id="@+id/registerFragment"
-        android:name="com.example.trainingroutine_pablocavaz.ui.RegisterFragment"
+        android:name="com.example.trainingroutine_pablocavaz.data.ui.RegisterFragment"
         android:label="Register Screen">
         <action
             android:id="@+id/action_registerFragment_to_loginFragment"
@@ -35,7 +35,7 @@
 
     <fragment
         android:id="@+id/sesionesFragment"
-        android:name="com.example.trainingroutine_pablocavaz.ui.SesionesFragment"
+        android:name="com.example.trainingroutine_pablocavaz.data.ui.SesionesFragment"
         android:label="Sesiones Screen">
         <action
             android:id="@+id/action_sesionesFragment_to_entrenamientosFragment"
@@ -50,16 +50,22 @@
 
     <fragment
         android:id="@+id/entrenamientosFragment"
-        android:name="com.example.trainingroutine_pablocavaz.ui.EntrenamientosFragment"
+        android:name="com.example.trainingroutine_pablocavaz.data.ui.EntrenamientosFragment"
         android:label="Entrenamientos Screen" />
 
     <fragment
         android:id="@+id/jugadoresFragment"
-        android:name="com.example.trainingroutine_pablocavaz.ui.JugadoresFragment"
+        android:name="com.example.trainingroutine_pablocavaz.data.ui.JugadoresFragment"
         android:label="Jugadores Screen" />
 
     <fragment
         android:id="@+id/crearSesionFragment"
-        android:name="com.example.trainingroutine_pablocavaz.ui.CrearSesionFragment"
+        android:name="com.example.trainingroutine_pablocavaz.data.ui.CrearSesionFragment"
         android:label="Crear Sesión Screen" />
+
+    <!-- Agregar fragmento para perfil de usuario -->
+    <fragment
+        android:id="@+id/userProfileFragment"
+        android:name="com.example.trainingroutine_pablocavaz.data.ui.UserProfileFragment"
+        android:label="Perfil del Usuario" />
 </navigation>
