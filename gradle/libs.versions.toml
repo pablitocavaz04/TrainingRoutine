@@ -2,12 +2,15 @@
 agp = "8.6.1"
 constraintlayoutVersion = "2.1.4"
 fragmentKtx = "1.8.5"
+gson = "2.10.1"
 kotlin = "1.9.24"
 coreKtx = "1.15.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
 appcompat = "1.7.0"
+kotlinxCoroutinesAndroid = "1.8.1"
+kotlinxCoroutinesCore = "1.7.3"
 lottieVersion = "5.2.0"
 material = "1.12.0"
 activity = "1.9.3"
@@ -16,6 +19,8 @@ navigationFragmentKtx = "2.8.4"
 navigationFragmentKtxVersion = "2.8.4"
 navigationUiKtx = "2.8.4"
 navigationUiKtxVersion = "2.8.4"
+retrofit = "2.11.0"
+securityCrypto = "1.1.0-alpha06"
 
 [libraries]
 android-lottie = { module = "com.airbnb.android:lottie", version.ref = "lottieVersion" }
@@ -24,15 +29,21 @@ androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = 
 androidx-fragment-ktx = { module = "androidx.fragment:fragment-ktx", version.ref = "fragmentKtx" }
 androidx-navigation-fragment-ktx-v274 = { module = "androidx.navigation:navigation-fragment-ktx", version.ref = "navigationFragmentKtxVersion" }
 androidx-navigation-ui-ktx-v274 = { module = "androidx.navigation:navigation-ui-ktx", version.ref = "navigationUiKtxVersion" }
+androidx-security-crypto = { module = "androidx.security:security-crypto", version.ref = "securityCrypto" }
+converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "retrofit" }
+gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinxCoroutinesAndroid" }
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutinesCore" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 androidx-navigation-fragment-ktx = { group = "androidx.navigation", name = "navigation-fragment-ktx", version.ref = "navigationFragmentKtx" }
 androidx-navigation-ui-ktx = { group = "androidx.navigation", name = "navigation-ui-ktx", version.ref = "navigationUiKtx" }
+retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

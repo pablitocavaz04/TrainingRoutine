@@ -40,10 +40,19 @@ android {
 }
 
 dependencies {
+    //SHAREDPREFERENCES
+    implementation(libs.androidx.security.crypto)
+    //GSON
+    implementation(libs.gson)
+    //CORUTINAS
+    implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.kotlinx.coroutines.core)
+    //RETROFIT
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
+    //Navigation
     implementation (libs.androidx.navigation.ui.ktx.v274)
     implementation (libs.androidx.navigation.fragment.ktx.v274)
-    //Navigation
-    implementation(libs.androidx.navigation.fragment.ktx)
     //Fragment
     implementation (libs.androidx.fragment.ktx)
     //Lotties
@@ -53,7 +62,6 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation (libs.androidx.constraintlayout)
-    implementation(libs.androidx.navigation.ui.ktx)
     //Testting Libraries
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
