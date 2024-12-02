@@ -23,7 +23,7 @@ class CrearSesionFragment : Fragment(R.layout.fragment_crear_sesion) {
         bottomNavigationView.visibility = View.GONE
 
         binding.toolbar.setNavigationOnClickListener {
-            findNavController().navigateUp() // Navegar hacia atrás
+            findNavController().navigateUp()
         }
 
         binding.btnGuardarSesion.setOnClickListener {

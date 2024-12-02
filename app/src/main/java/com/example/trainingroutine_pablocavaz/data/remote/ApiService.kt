@@ -19,7 +19,7 @@ interface ApiService {
     @POST("/api/auth/local")
     suspend fun login(@Body credentials: LoginRequest): LoginResponse
 
-    // Crear persona asociada al usuario
+    // Crear la persona del usuario que hemos creado
     @POST("/api/personas")
     suspend fun createPersona(
         @Header("Authorization") token: String,

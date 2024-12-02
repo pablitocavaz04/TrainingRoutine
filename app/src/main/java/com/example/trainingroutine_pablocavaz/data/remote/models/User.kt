@@ -5,5 +5,5 @@ data class User(
     val id: String,
     val username: String,
     val email: String,
-    val persona: Persona? = null // Opcional para manejar respuestas sin `persona`
+    val persona: Persona? = null
 )
