@@ -2,5 +2,5 @@ package com.example.trainingroutine_pablocavaz.data.remote.models
 
 data class Persona(
     val id: String,
-    val rol: String
+    val Rol: String
 )
