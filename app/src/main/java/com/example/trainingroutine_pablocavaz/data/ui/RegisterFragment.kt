@@ -11,10 +11,12 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.trainingroutine_pablocavaz.R
 import com.example.trainingroutine_pablocavaz.data.remote.RetrofitInstance
-import com.example.trainingroutine_pablocavaz.data.remote.models.RegisterRequest
+import com.example.trainingroutine_pablocavaz.data.remote.models.PersonaData
 import com.example.trainingroutine_pablocavaz.data.remote.models.PersonaRequest
+import com.example.trainingroutine_pablocavaz.data.remote.models.RegisterRequest
 import com.example.trainingroutine_pablocavaz.databinding.FragmentRegisterBinding
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
 
 class RegisterFragment : Fragment() {
 
@@ -52,7 +54,7 @@ class RegisterFragment : Fragment() {
                 if (isTrainer && trainerKey != "ENTRENADOR2024") {
                     Toast.makeText(requireContext(), "Clave incorrecta", Toast.LENGTH_SHORT).show()
                 } else {
-                    val role = if (isTrainer) "entrenador" else "jugador"
+                    val role = if (isTrainer) "Entrenador" else "Jugador"
                     registerUser(name, email, password, role)
                 }
             } else {
@@ -72,13 +74,16 @@ class RegisterFragment : Fragment() {
                     RegisterRequest(name, email, password)
                 )
 
-                val userId = registerResponse.user.id
+                val userId = registerResponse.user.id.toInt()
                 val token = registerResponse.jwt
 
                 createPersona(userId, role, token)
 
+            } catch (e: HttpException) {
+                Log.e("RegisterFragment", "HTTP error: ${e.response()?.errorBody()?.string()}")
+                Toast.makeText(requireContext(), "Error en el registro", Toast.LENGTH_SHORT).show()
             } catch (e: Exception) {
-                Log.e("RegisterFragment", "Error en el registro: ${e.message}")
+                Log.e("RegisterFragment", "Error en el registro: ${e.localizedMessage}")
                 Toast.makeText(requireContext(), "Error en el registro", Toast.LENGTH_SHORT).show()
             }
         }
@@ -87,14 +92,20 @@ class RegisterFragment : Fragment() {
     private fun createPersona(userId: Int, role: String, token: String) {
         lifecycleScope.launch {
             try {
-                RetrofitInstance.api.createPersona(
-                    "Bearer $token",
-                    PersonaRequest(role, userId)
+                val personaRequest = PersonaRequest(
+                    data = PersonaData(
+                        Rol = role,
+                        user = userId
+                    )
                 )
+                RetrofitInstance.api.createPersona("Bearer $token", personaRequest)
                 Toast.makeText(requireContext(), "Registro exitoso", Toast.LENGTH_SHORT).show()
                 findNavController().navigate(R.id.loginFragment)
+            } catch (e: HttpException) {
+                Log.e("RegisterFragment", "HTTP error al crear persona: ${e.response()?.errorBody()?.string()}")
+                Toast.makeText(requireContext(), "Error al crear la persona", Toast.LENGTH_SHORT).show()
             } catch (e: Exception) {
-                Log.e("RegisterFragment", "Error al crear la persona: ${e.message}")
+                Log.e("RegisterFragment", "Error al crear la persona: ${e.localizedMessage}")
                 Toast.makeText(requireContext(), "Error al crear la persona", Toast.LENGTH_SHORT).show()
             }
         }
