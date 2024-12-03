@@ -6,15 +6,14 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.trainingroutine_pablocavaz.R
+import com.example.trainingroutine_pablocavaz.data.remote.models.PersonaWithUserData
 
-data class Jugador(val nombre: String, val equipo: String)
-
-class JugadorAdapter(private val jugadores: List<Jugador>) :
+class JugadorAdapter(private val jugadores: List<PersonaWithUserData>) :
     RecyclerView.Adapter<JugadorAdapter.JugadorViewHolder>() {
 
     inner class JugadorViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val nombreTextView: TextView = itemView.findViewById(R.id.textViewNombreJugador)
-        val equipoTextView: TextView = itemView.findViewById(R.id.textViewEquipoJugador)
+        val emailTextView: TextView = itemView.findViewById(R.id.textViewEquipoJugador)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): JugadorViewHolder {
@@ -25,8 +24,13 @@ class JugadorAdapter(private val jugadores: List<Jugador>) :
 
     override fun onBindViewHolder(holder: JugadorViewHolder, position: Int) {
         val jugador = jugadores[position]
-        holder.nombreTextView.text = jugador.nombre
-        holder.equipoTextView.text = jugador.equipo
+
+        // Mostrar el rol
+        holder.nombreTextView.text = jugador.attributes.Rol
+
+        // Manejar el email desde la estructura anidada
+        val email = jugador.attributes.user?.data?.attributes?.email
+        holder.emailTextView.text = email ?: "Email no disponible"
     }
 
     override fun getItemCount(): Int = jugadores.size

@@ -24,7 +24,14 @@
             android:id="@+id/textViewEquipoJugador"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Equipo"
+            android:text="Rol"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/textViewEmailJugador"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Email"
             android:textSize="14sp" />
     </LinearLayout>
 </androidx.cardview.widget.CardView>
