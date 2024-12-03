@@ -7,9 +7,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.trainingroutine_pablocavaz.R
+import com.example.trainingroutine_pablocavaz.data.SharedViewModel
 import com.example.trainingroutine_pablocavaz.data.remote.RetrofitInstance
 import com.example.trainingroutine_pablocavaz.data.remote.models.LoginRequest
 import com.example.trainingroutine_pablocavaz.databinding.FragmentLoginBinding
@@ -20,6 +22,7 @@ class LoginFragment : Fragment() {
 
     private var _binding: FragmentLoginBinding? = null
     private val binding get() = _binding!!
+    private val sharedViewModel: SharedViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -60,7 +63,6 @@ class LoginFragment : Fragment() {
                 val token = loginResponse.jwt
                 val userId = loginResponse.user.id.toInt()
 
-                // Obtener el rol de la persona asociada al usuario
                 getPersonaRol(userId, token)
             } catch (e: HttpException) {
                 Log.e("LoginFragment", "HTTP error: ${e.response()?.errorBody()?.string()}")
@@ -76,14 +78,13 @@ class LoginFragment : Fragment() {
         lifecycleScope.launch {
             try {
                 val personaResponse = RetrofitInstance.api.getPersonasByUserId("Bearer $token", userId.toString())
-
-                // Verificamos si la lista "data" no está vacía
                 if (personaResponse.data.isNotEmpty()) {
-                    val personaData = personaResponse.data.first() // Tomamos el primer elemento
-                    val personaAttributes = personaData.attributes
+                    val personaAttributes = personaResponse.data.first().attributes
+                    val role = personaAttributes.Rol
+                    Log.d("LoginFragment", "Rol recibido: $role")
 
-                    Log.d("LoginFragment", "Rol recibido: ${personaAttributes.Rol}")
-                    navigateToRoleSpecificScreen(personaAttributes.Rol)
+                    sharedViewModel.setUserRole(role) // Actualizar el rol en el ViewModel
+                    findNavController().navigate(R.id.sesionesFragment)
                 } else {
                     Toast.makeText(requireContext(), "No se encontró información del rol del usuario", Toast.LENGTH_SHORT).show()
                 }
@@ -94,21 +95,6 @@ class LoginFragment : Fragment() {
                 Log.e("LoginFragment", "Error al obtener persona: ${e.message}")
                 Toast.makeText(requireContext(), "Error al obtener la persona asociada", Toast.LENGTH_SHORT).show()
             }
-        }
-    }
-
-
-
-    private fun navigateToRoleSpecificScreen(role: String?) {
-        if (role.isNullOrEmpty()) {
-            Toast.makeText(requireContext(), "Rol desconocido", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        when (role) {
-            "Jugador" -> findNavController().navigate(R.id.sesionesFragment)
-            "Entrenador" -> findNavController().navigate(R.id.sesionesFragment)
-            else -> Toast.makeText(requireContext(), "Rol desconocido", Toast.LENGTH_SHORT).show()
         }
     }
 }
