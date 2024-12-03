@@ -27,4 +27,8 @@ interface ApiService {
         @Query("filters[user][id]") userId: String
     ): PersonaResponse
 
+    @GET("/api/users/me")
+    suspend fun getUserDetails(@Header("Authorization") token: String): UserDetailsResponse
+
+
 }

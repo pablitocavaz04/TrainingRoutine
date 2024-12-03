@@ -1,5 +1,6 @@
 package com.example.trainingroutine_pablocavaz.data.ui
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -59,11 +60,20 @@ class LoginFragment : Fragment() {
     private fun loginUser(username: String, password: String) {
         lifecycleScope.launch {
             try {
+                // Llamada al endpoint de login
                 val loginResponse = RetrofitInstance.api.login(LoginRequest(username, password))
                 val token = loginResponse.jwt
                 val userId = loginResponse.user.id.toInt()
 
+                // Guardar el token en SharedPreferences
+                val sharedPreferences = requireContext().getSharedPreferences("prefs", Context.MODE_PRIVATE)
+                sharedPreferences.edit().putString("token", token).apply()
+
+                // Obtener y manejar el rol del usuario
                 getPersonaRol(userId, token)
+
+                // Mensaje de éxito
+                Toast.makeText(requireContext(), "Inicio de sesión exitoso", Toast.LENGTH_SHORT).show()
             } catch (e: HttpException) {
                 Log.e("LoginFragment", "HTTP error: ${e.response()?.errorBody()?.string()}")
                 Toast.makeText(requireContext(), "Error en el inicio de sesión", Toast.LENGTH_SHORT).show()
@@ -73,6 +83,7 @@ class LoginFragment : Fragment() {
             }
         }
     }
+
 
     private fun getPersonaRol(userId: Int, token: String) {
         lifecycleScope.launch {
