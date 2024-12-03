@@ -40,6 +40,8 @@ android {
 }
 
 dependencies {
+
+
     //SHAREDPREFERENCES
     implementation(libs.androidx.security.crypto)
     //GSON
@@ -56,6 +58,7 @@ dependencies {
     //Fragment
     implementation (libs.androidx.fragment.ktx)
     //Lotties
+    implementation (libs.lottie.v600)
     implementation (libs.android.lottie)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
