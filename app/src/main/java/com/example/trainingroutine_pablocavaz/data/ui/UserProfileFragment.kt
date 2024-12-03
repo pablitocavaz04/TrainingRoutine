@@ -79,9 +79,10 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
         sharedPreferences.edit().clear().apply()
         Toast.makeText(requireContext(), "Sesión cerrada", Toast.LENGTH_SHORT).show()
 
-        // Redirigir al LoginFragment
-        redirectToLogin()
+        // Cerrar la app completamente , con chatGPT
+        requireActivity().finishAffinity()
     }
+
 
     private fun redirectToLogin() {
         findNavController().navigate(R.id.action_userProfileFragment_to_loginFragment)
