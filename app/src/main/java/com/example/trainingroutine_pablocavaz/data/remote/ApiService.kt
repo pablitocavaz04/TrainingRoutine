@@ -37,4 +37,10 @@ interface ApiService {
         @Query("populate") populate: String = "user"
     ): PersonaWithUserResponse
 
+    @GET("/api/entrenamientos")
+    suspend fun getEntrenamientos(
+        @Header("Authorization") token: String
+    ): EntrenamientoResponse
+
+
 }

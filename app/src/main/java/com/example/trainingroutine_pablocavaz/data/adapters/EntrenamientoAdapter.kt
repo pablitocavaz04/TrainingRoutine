@@ -6,16 +6,15 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.trainingroutine_pablocavaz.R
-
-data class Entrenamiento(val nombre: String, val fecha: String,val tipo: String)
+import com.example.trainingroutine_pablocavaz.data.remote.models.Entrenamiento
 
 class EntrenamientoAdapter(private val entrenamientos: List<Entrenamiento>) :
     RecyclerView.Adapter<EntrenamientoAdapter.EntrenamientoViewHolder>() {
 
     inner class EntrenamientoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val nombreTextView: TextView = itemView.findViewById(R.id.textViewNombreEntrenamiento)
+        val descripcionTextView: TextView = itemView.findViewById(R.id.textViewDescripcionEntrenamiento)
         val fechaTextView: TextView = itemView.findViewById(R.id.textViewFechaEntrenamiento)
-        val tipoTextView: TextView = itemView.findViewById(R.id.textViewTipoEntrenamiento)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EntrenamientoViewHolder {
@@ -26,9 +25,9 @@ class EntrenamientoAdapter(private val entrenamientos: List<Entrenamiento>) :
 
     override fun onBindViewHolder(holder: EntrenamientoViewHolder, position: Int) {
         val entrenamiento = entrenamientos[position]
-        holder.nombreTextView.text = entrenamiento.nombre
-        holder.fechaTextView.text = entrenamiento.fecha
-        holder.tipoTextView.text = entrenamiento.tipo
+        holder.nombreTextView.text = entrenamiento.attributes.nombre
+        holder.descripcionTextView.text = entrenamiento.attributes.descripcion
+        holder.fechaTextView.text = entrenamiento.attributes.fecha
     }
 
     override fun getItemCount(): Int = entrenamientos.size
