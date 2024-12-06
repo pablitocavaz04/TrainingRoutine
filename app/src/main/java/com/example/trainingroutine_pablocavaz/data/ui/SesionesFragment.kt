@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.trainingroutine_pablocavaz.R
@@ -60,8 +61,7 @@ class SesionesFragment : Fragment() {
         }
 
         fabCrearSesion.setOnClickListener {
-            // Navegar a la pantalla para crear una sesión
-            Toast.makeText(requireContext(), "Función de crear sesión aún no implementada.", Toast.LENGTH_SHORT).show()
+            findNavController().navigate(R.id.action_sesionesFragment_to_crearSesionFragment)
         }
     }
 

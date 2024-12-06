@@ -7,6 +7,7 @@
     android:layout_height="match_parent"
     tools:context=".data.ui.CrearSesionFragment">
 
+    <!-- Toolbar -->
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="0dp"
@@ -18,6 +19,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:navigationIcon="@drawable/ic_back" />
 
+    <!-- Scrollable Content -->
     <ScrollView
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -32,33 +34,66 @@
             android:orientation="vertical"
             android:padding="16dp">
 
+            <!-- Nombre de la Sesión -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Nombre del Entrenamiento"
+                android:text="Nombre de la Sesión"
                 android:textStyle="bold" />
 
             <EditText
-                android:id="@+id/input_nombre_entrenamiento"
+                android:id="@+id/input_nombre_sesion"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Ingrese el nombre"
                 android:layout_marginTop="8dp" />
 
+            <!-- Selección de Entrenamiento -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Jugadores"
+                android:text="Entrenamiento"
                 android:layout_marginTop="16dp"
                 android:textStyle="bold" />
 
-            <EditText
-                android:id="@+id/input_jugadores"
+            <Spinner
+                android:id="@+id/spinner_entrenamientos"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Ingrese los jugadores"
                 android:layout_marginTop="8dp" />
 
+            <!-- Selección de Jugadores -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Seleccionar Jugadores"
+                android:layout_marginTop="16dp"
+                android:textStyle="bold" />
+
+            <Spinner
+                android:id="@+id/spinner_jugadores"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:spinnerMode="dialog" />
+
+            <!-- Estado de la Sesión -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Estado de la Sesión"
+                android:layout_marginTop="16dp"
+                android:textStyle="bold" />
+
+            <Switch
+                android:id="@+id/switch_estado_sesion"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Activa"
+                android:layout_marginTop="8dp"
+                tools:ignore="UseSwitchCompatOrMaterialXml" />  <!--CompatMaterial de ChatGpt-->
+
+            <!-- Botón Guardar -->
             <Button
                 android:id="@+id/btn_guardar_sesion"
                 android:layout_width="match_parent"

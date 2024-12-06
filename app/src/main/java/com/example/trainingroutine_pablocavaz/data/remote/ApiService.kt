@@ -58,6 +58,12 @@ interface ApiService {
     ): SesionesResponse
 
 
+    @POST("/api/sesiones")
+    suspend fun createSesion(
+        @Header("Authorization") token: String,
+        @Body request: CrearSesionRequest
+    )
+
 
 
 }
