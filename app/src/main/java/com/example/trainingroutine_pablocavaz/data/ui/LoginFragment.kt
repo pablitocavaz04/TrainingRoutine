@@ -39,8 +39,7 @@ class LoginFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
+        super.onViewCreated(view, savedInstanceState) // Ahora incluye ambos parámetros
         binding.btnLogin.setOnClickListener {
             val username = binding.etUsername.text.toString()
             val password = binding.etPassword.text.toString()
@@ -57,54 +56,95 @@ class LoginFragment : Fragment() {
         }
     }
 
+
     private fun loginUser(username: String, password: String) {
         lifecycleScope.launch {
             try {
-                // Llamada al endpoint de login
                 val loginResponse = RetrofitInstance.api.login(LoginRequest(username, password))
                 val token = loginResponse.jwt
                 val userId = loginResponse.user.id.toInt()
 
-                // Guardar el token en SharedPreferences
-                val sharedPreferences = requireContext().getSharedPreferences("prefs", Context.MODE_PRIVATE)
-                sharedPreferences.edit().putString("token", token).apply()
+                // Guardar token e ID en SharedPreferences
+                val sharedPreferences =
+                    requireContext().getSharedPreferences("prefs", Context.MODE_PRIVATE)
+                with(sharedPreferences.edit()) {
+                    putString("token", token)
+                    putInt("user_id", userId)
+                    apply()
+                }
 
-                // Obtener y manejar el rol del usuario
+                // Obtener y guardar el rol del usuario
                 getPersonaRol(userId, token)
 
-                // Mensaje de éxito
-                Toast.makeText(requireContext(), "Inicio de sesión exitoso", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    requireContext(),
+                    "Inicio de sesión exitoso",
+                    Toast.LENGTH_SHORT
+                ).show()
             } catch (e: HttpException) {
-                Log.e("LoginFragment", "HTTP error: ${e.response()?.errorBody()?.string()}")
-                Toast.makeText(requireContext(), "Error en el inicio de sesión", Toast.LENGTH_SHORT).show()
+                Log.e(
+                    "LoginFragment",
+                    "HTTP error: ${e.response()?.errorBody()?.string()}"
+                )
+                Toast.makeText(
+                    requireContext(),
+                    "Error en el inicio de sesión",
+                    Toast.LENGTH_SHORT
+                ).show()
             } catch (e: Exception) {
                 Log.e("LoginFragment", "Error en el inicio de sesión: ${e.message}")
-                Toast.makeText(requireContext(), "Error en el inicio de sesión", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    requireContext(),
+                    "Error en el inicio de sesión",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
     }
 
-
     private fun getPersonaRol(userId: Int, token: String) {
         lifecycleScope.launch {
             try {
-                val personaResponse = RetrofitInstance.api.getPersonasByUserId("Bearer $token", userId.toString())
+                val personaResponse =
+                    RetrofitInstance.api.getPersonasByUserId("Bearer $token", userId.toString())
                 if (personaResponse.data.isNotEmpty()) {
                     val personaAttributes = personaResponse.data.first().attributes
                     val role = personaAttributes.Rol
-                    Log.d("LoginFragment", "Rol recibido: $role")
+
+                    // Guardar el rol en SharedPreferences
+                    val sharedPreferences =
+                        requireContext().getSharedPreferences("prefs", Context.MODE_PRIVATE)
+                    with(sharedPreferences.edit()) {
+                        putString("role", role)
+                        apply()
+                    }
 
                     sharedViewModel.setUserRole(role) // Actualizar el rol en el ViewModel
                     findNavController().navigate(R.id.sesionesFragment)
                 } else {
-                    Toast.makeText(requireContext(), "No se encontró información del rol del usuario", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        requireContext(),
+                        "No se encontró información del rol del usuario",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             } catch (e: HttpException) {
-                Log.e("LoginFragment", "HTTP error al obtener persona: ${e.response()?.errorBody()?.string()}")
-                Toast.makeText(requireContext(), "Error al obtener la persona asociada", Toast.LENGTH_SHORT).show()
+                Log.e(
+                    "LoginFragment",
+                    "HTTP error al obtener persona: ${e.response()?.errorBody()?.string()}"
+                )
+                Toast.makeText(
+                    requireContext(),
+                    "Error al obtener la persona asociada",
+                    Toast.LENGTH_SHORT
+                ).show()
             } catch (e: Exception) {
                 Log.e("LoginFragment", "Error al obtener persona: ${e.message}")
-                Toast.makeText(requireContext(), "Error al obtener la persona asociada", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    requireContext(),
+                    "Error al obtener la persona asociada",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
     }

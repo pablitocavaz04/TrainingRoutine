@@ -6,16 +6,14 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.trainingroutine_pablocavaz.R
+import com.example.trainingroutine_pablocavaz.data.remote.models.SesionAttributes
 
-data class Sesion(val nombre: String, val entrenador: String,val fecha:String)
-
-class SesionAdapter(private val sesiones: List<Sesion>) :
+class SesionAdapter(private val sesiones: List<SesionAttributes>) :
     RecyclerView.Adapter<SesionAdapter.SesionViewHolder>() {
 
     inner class SesionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val nombreTextView: TextView = itemView.findViewById(R.id.textViewNombreSesion)
-        val entrenadorTextView: TextView = itemView.findViewById(R.id.textViewEntrenadorSesion)
-        val fechaTextView: TextView = itemView.findViewById(R.id.textViewFechaSesion)
+        val estadoTextView: TextView = itemView.findViewById(R.id.textViewEstadoSesion)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SesionViewHolder {
@@ -26,10 +24,11 @@ class SesionAdapter(private val sesiones: List<Sesion>) :
 
     override fun onBindViewHolder(holder: SesionViewHolder, position: Int) {
         val sesion = sesiones[position]
+        println("SESION DATA: $sesion")
         holder.nombreTextView.text = sesion.nombre
-        holder.entrenadorTextView.text = sesion.entrenador
-        holder.fechaTextView.text = sesion.fecha
+        holder.estadoTextView.text = if (sesion.estado) "Activa" else "Inactiva"
     }
+
 
     override fun getItemCount(): Int = sesiones.size
 }
