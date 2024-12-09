@@ -12,7 +12,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.trainingroutine_pablocavaz.R
-import com.example.trainingroutine_pablocavaz.data.SharedViewModel
+import com.example.trainingroutine_pablocavaz.data.ui.viewmodels.SharedViewModel
 import com.example.trainingroutine_pablocavaz.data.remote.RetrofitInstance
 import com.example.trainingroutine_pablocavaz.data.remote.models.LoginRequest
 import com.example.trainingroutine_pablocavaz.databinding.FragmentLoginBinding

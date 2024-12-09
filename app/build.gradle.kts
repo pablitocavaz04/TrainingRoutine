@@ -1,6 +1,8 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    id("kotlin-kapt")
+    id("com.google.dagger.hilt.android")
 }
 
 android {
@@ -40,8 +42,15 @@ android {
 }
 
 dependencies {
-
-
+    //HILT
+    implementation(libs.hilt.android)
+    kapt(libs.hilt.compiler)
+    //GSON
+    implementation(libs.gson)
+    //ROOM
+    kapt(libs.androidx.room.compiler)
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
     //SHAREDPREFERENCES
     implementation(libs.androidx.security.crypto)
     //GSON

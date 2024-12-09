@@ -1,4 +1,4 @@
-package com.example.trainingroutine_pablocavaz.data
+package com.example.trainingroutine_pablocavaz.data.ui.viewmodels
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
