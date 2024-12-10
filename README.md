@@ -1,54 +1,59 @@
-# Autor: Pablo Camino Vázquez
-# Correo Personal: pablocavaz2004@gmail.com
-# Correo Corporativo: pcamvaz2106@g.educaand.es
-# Github: https://github.com/pablitocavaz04
-
-# Training Routine App
-
-Training Routine es una aplicación Android para la gestión de entrenamientos, sesiones y jugadores.
-Utiliza persistencia local con Room y sincronización remota con Strapi para mejorar el rendimiento y
-la experiencia del usuario.
+# **Training Routine App**  
+**Autor**: Pablo Camino Vázquez  
+**Correo Personal**: [pablocavaz2004@gmail.com](mailto:pablocavaz2004@gmail.com)  
+**Correo Corporativo**: [pcamvaz2106@g.educaand.es](mailto:pcamvaz2106@g.educaand.es)  
+**GitHub**: [pablitocavaz04](https://github.com/pablitocavaz04)  
 
 ---
 
-## **Características Principales**
-- **Roles de Usuario**:
-  - **Jugador**:
-    - Visualizar sesiones asignadas y detalles de entrenamientos.
-  - **Entrenador**:
-    - Crear, gestionar y asignar sesiones a jugadores.
-    - Visualizar jugadores y entrenamientos disponibles.
-  - **Gestor** (disponible en la versión web):
-    - Crear, editar y eliminar jugadores, entrenadores y entrenamientos.
-
-- **Funcionalidades Comunes**:
-  - Autenticación mediante JWT.
-  - Persistencia local con **Room** para mejorar el rendimiento y manejar datos offline.
-  - Navegación entre pantallas con **Navigation Component**.
-  - Interfaz moderna basada en **Material Design**.
+## 📋 **Descripción**
+**Training Routine App** es una aplicación Android diseñada para la gestión de entrenamientos, sesiones y jugadores.  
+Utiliza persistencia local con **Room** y sincronización remota con **Strapi**, ofreciendo una experiencia de usuario fluida y eficiente.
 
 ---
 
-## **Tecnologías Usadas**
-- **Frontend**:
-  - Android: Kotlin, Jetpack Navigation, Room, Material Design.
-  - Web: Ionic Angular.
+## ⭐ **Características Principales**
+### 🏋️ **Roles de Usuario**
+- **Jugador**:  
+  - Visualizar sesiones asignadas y detalles de entrenamientos.
+- **Entrenador**:  
+  - Crear, gestionar y asignar sesiones a jugadores.
+  - Visualizar jugadores y entrenamientos disponibles.
+- **Gestor** *(disponible en la versión web)*:  
+  - Crear, editar y eliminar jugadores, entrenadores y entrenamientos.
 
-- **Backend**:
-  - Strapi para la gestión de modelos, autenticación y API REST.
-
-- **Persistencia Local**:
-  - Room Database.
-
-- **Otras Herramientas**:
-  - Retrofit para las llamadas API.
-  - Hilt para inyección de dependencias.
-  - Lottie para animaciones.
-  - EncryptedSharedPreferences para manejo seguro de datos de usuario.
+### 🔑 **Funcionalidades Comunes**
+- **Autenticación segura con JWT**.
+- **Persistencia local** con **Room** para manejo de datos offline.
+- Navegación intuitiva con **Navigation Component**.
+- Interfaz moderna basada en **Material Design**.
 
 ---
 
-## **Estructura del Proyecto**
+## 🛠 **Tecnologías Utilizadas**
+### 📱 **Frontend**
+- **Android**:  
+  - **Kotlin**, **Jetpack Navigation**, **Room**, **Material Design**.
+- **Web** *(para gestores)*:  
+  - **Ionic Angular**.
+
+### ⚙️ **Backend**
+- **Strapi**:  
+  - Gestión de modelos, autenticación y API REST.
+
+### 💾 **Persistencia Local**
+- **Room Database** para almacenar y gestionar datos offline.
+
+### 🔧 **Herramientas Complementarias**
+- **Retrofit**: Comunicación con el backend.  
+- **Hilt**: Inyección de dependencias.  
+- **Lottie**: Animaciones interactivas.  
+- **EncryptedSharedPreferences**: Manejo seguro de datos de usuario.  
+
+---
+
+## 📂 **Estructura del Proyecto**
+```plaintext
 app/
 ├── data/
 │   ├── local/            # Configuración de Room (DAO, entidades, base de datos)
