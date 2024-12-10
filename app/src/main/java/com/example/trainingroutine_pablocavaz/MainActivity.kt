@@ -7,12 +7,13 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
-import com.example.trainingroutine_pablocavaz.data.local.entities.EntrenamientoEntity
-import com.example.trainingroutine_pablocavaz.data.local.entities.PersonaEntity
-import com.example.trainingroutine_pablocavaz.data.local.entities.SesionEntity
+import com.example.trainingroutine_pablocavaz.data.repository.EntrenamientoRepository
+import com.example.trainingroutine_pablocavaz.data.repository.PersonaRepository
+import com.example.trainingroutine_pablocavaz.data.repository.SesionRepository
 import com.example.trainingroutine_pablocavaz.data.ui.viewmodels.EntrenamientoViewModel
 import com.example.trainingroutine_pablocavaz.data.ui.viewmodels.PersonaViewModel
 import com.example.trainingroutine_pablocavaz.data.ui.viewmodels.SesionViewModel
@@ -20,6 +21,8 @@ import com.example.trainingroutine_pablocavaz.data.ui.viewmodels.SharedViewModel
 import com.example.trainingroutine_pablocavaz.databinding.ActivityMainBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -27,9 +30,19 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var navController: NavController
     private lateinit var sharedViewModel: SharedViewModel
+
     private val entrenamientoViewModel: EntrenamientoViewModel by viewModels()
     private val sesionViewModel: SesionViewModel by viewModels()
     private val personaViewModel: PersonaViewModel by viewModels()
+
+    @Inject
+    lateinit var personaRepository: PersonaRepository
+
+    @Inject
+    lateinit var sesionRepository: SesionRepository
+
+    @Inject
+    lateinit var entrenamientoRepository: EntrenamientoRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,8 +80,8 @@ class MainActivity : AppCompatActivity() {
 
         bottomNavigationView.setupWithNavController(navController)
 
-        // Prueba: Insertar y recuperar entrenamientos, sesiones y personas
-        pruebaDatos()
+        // Intentar sincronizar datos al iniciar la app
+        sincronizarDatos()
     }
 
     private fun configureMenuBasedOnRole(role: String, bottomNavigationView: BottomNavigationView) {
@@ -81,47 +94,52 @@ class MainActivity : AppCompatActivity() {
         bottomNavigationView.requestLayout() // Forzar redibujado del menú
     }
 
-    private fun pruebaDatos() {
-        // Insertar un ejemplo de entrenamiento
-        val entrenamiento = EntrenamientoEntity(
-            id = 1,
-            nombre = "Entrenamiento de Prueba",
-            descripcion = "Prueba para validar Room",
-            fecha = "2024-12-10",
-            imagen = null
-        )
-        entrenamientoViewModel.insertEntrenamiento(entrenamiento)
+    private fun sincronizarDatos() {
+        val sharedPreferences = getSharedPreferences("AppPreferences", MODE_PRIVATE)
+        val token = sharedPreferences.getString("jwt_token", null)
 
-        // Insertar un ejemplo de sesión
-        val sesion = SesionEntity(
-            id = 1,
-            nombre = "Sesion de Prueba",
-            estado = true,
-            entrenamientoId = 1,
-            entrenadorId = 1,
-            jugadoresId = listOf(1, 2, 3)
-        )
-        sesionViewModel.insertSesion(sesion)
-
-        // Insertar un ejemplo de persona
-        val persona = PersonaEntity(
-            id = 1,
-            rol = "Jugador",
-            usuarioId = 1
-        )
-        personaViewModel.insertPersona(persona)
-
-        // Recuperar y mostrar datos
-        entrenamientoViewModel.getEntrenamientos { entrenamientos ->
-            entrenamientos.forEach { println("Entrenamiento: ${it.nombre}") }
+        if (token.isNullOrEmpty()) {
+            println("Sincronización cancelada: No hay token almacenado.")
+            return
         }
 
-        sesionViewModel.getSesiones { sesiones ->
-            sesiones.forEach { println("Sesion: ${it.nombre}") }
+        lifecycleScope.launch {
+            try {
+                personaRepository.syncPersonas("Bearer $token")
+                val personas = personaRepository.getAllPersonas()
+                personas.forEach { println("Persona sincronizada: ${it.rol}") }
+            } catch (e: Exception) {
+                println("Error sincronizando personas: ${e.message}")
+            }
         }
 
-        personaViewModel.getPersonas { personas ->
-            personas.forEach { println("Persona: ${it.rol}") }
+        lifecycleScope.launch {
+            try {
+                sesionRepository.syncSesiones("Bearer $token")
+                val sesiones = sesionRepository.getAllSesiones()
+                sesiones.forEach { println("Sesion sincronizada: ${it.nombre}") }
+            } catch (e: Exception) {
+                println("Error sincronizando sesiones: ${e.message}")
+            }
+        }
+
+        lifecycleScope.launch {
+            try {
+                entrenamientoRepository.syncEntrenamientos("Bearer $token")
+                val entrenamientos = entrenamientoRepository.getAllEntrenamientos()
+                entrenamientos.forEach { println("Entrenamiento sincronizado: ${it.nombre}") }
+            } catch (e: Exception) {
+                println("Error sincronizando entrenamientos: ${e.message}")
+            }
+        }
+    }
+
+    fun guardarToken(jwt: String) {
+        val sharedPreferences = getSharedPreferences("AppPreferences", MODE_PRIVATE)
+        with(sharedPreferences.edit()) {
+            putString("jwt_token", jwt)
+            apply()
         }
     }
 }
+//Logs y Excepciones con IA

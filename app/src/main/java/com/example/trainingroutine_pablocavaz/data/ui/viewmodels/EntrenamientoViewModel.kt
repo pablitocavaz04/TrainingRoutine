@@ -26,4 +26,6 @@ class EntrenamientoViewModel @Inject constructor(
             callback(entrenamientos)
         }
     }
+
+
 }

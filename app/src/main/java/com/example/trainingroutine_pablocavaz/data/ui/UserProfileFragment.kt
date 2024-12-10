@@ -88,3 +88,4 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
         findNavController().navigate(R.id.action_userProfileFragment_to_loginFragment)
     }
 }
+//LOGS Y EXCEPCIONES CON IA

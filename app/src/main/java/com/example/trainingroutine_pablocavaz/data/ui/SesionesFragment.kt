@@ -44,7 +44,6 @@ class SesionesFragment : Fragment() {
         userRole = sharedPreferences.getString("role", null)
         userId = sharedPreferences.getInt("user_id", -1).takeIf { it != -1 }
 
-        // Logging para verificar datos
         println("TOKEN: $token")
         println("USER ROLE: $userRole")
         println("USER ID: $userId")
@@ -84,7 +83,6 @@ class SesionesFragment : Fragment() {
                     )
                 }
 
-                // Verificar si la respuesta tiene datos
                 if (sesionesResponse.data.isNotEmpty()) {
                     val sesiones = sesionesResponse.data.map { it.attributes }
                     recyclerView.adapter = SesionAdapter(sesiones)
@@ -104,3 +102,4 @@ class SesionesFragment : Fragment() {
     }
 
 }
+//LOGS Y EXPECIONES CON IA

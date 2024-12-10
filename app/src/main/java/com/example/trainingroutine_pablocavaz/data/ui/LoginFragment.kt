@@ -39,7 +39,7 @@ class LoginFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState) // Ahora incluye ambos parámetros
+        super.onViewCreated(view, savedInstanceState)
         binding.btnLogin.setOnClickListener {
             val username = binding.etUsername.text.toString()
             val password = binding.etPassword.text.toString()
@@ -64,7 +64,7 @@ class LoginFragment : Fragment() {
                 val token = loginResponse.jwt
                 val userId = loginResponse.user.id.toInt()
 
-                // Guardar token e ID en SharedPreferences
+                // Guardar token e ID en el shareprefenece
                 val sharedPreferences =
                     requireContext().getSharedPreferences("prefs", Context.MODE_PRIVATE)
                 with(sharedPreferences.edit()) {
@@ -72,8 +72,6 @@ class LoginFragment : Fragment() {
                     putInt("user_id", userId)
                     apply()
                 }
-
-                // Obtener y guardar el rol del usuario
                 getPersonaRol(userId, token)
 
                 Toast.makeText(
@@ -111,7 +109,6 @@ class LoginFragment : Fragment() {
                     val personaAttributes = personaResponse.data.first().attributes
                     val role = personaAttributes.Rol
 
-                    // Guardar el rol en SharedPreferences
                     val sharedPreferences =
                         requireContext().getSharedPreferences("prefs", Context.MODE_PRIVATE)
                     with(sharedPreferences.edit()) {
@@ -119,7 +116,7 @@ class LoginFragment : Fragment() {
                         apply()
                     }
 
-                    sharedViewModel.setUserRole(role) // Actualizar el rol en el ViewModel
+                    sharedViewModel.setUserRole(role)
                     findNavController().navigate(R.id.sesionesFragment)
                 } else {
                     Toast.makeText(
@@ -149,3 +146,4 @@ class LoginFragment : Fragment() {
         }
     }
 }
+//LOGS Y EXCEPECIONES IA

@@ -111,3 +111,4 @@ class RegisterFragment : Fragment() {
         }
     }
 }
+//LOGS Y EXPECIONES CN IA

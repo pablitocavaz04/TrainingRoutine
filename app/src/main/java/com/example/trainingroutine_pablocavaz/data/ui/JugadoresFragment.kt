@@ -57,3 +57,4 @@ class JugadoresFragment : Fragment() {
         }
     }
 }
+//LOGS EXEPCIONES CON IA

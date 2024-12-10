@@ -1,5 +1,6 @@
 package com.example.trainingroutine_pablocavaz.data.ui
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
@@ -26,8 +27,9 @@ class CrearSesionFragment : Fragment(R.layout.fragment_crear_sesion) {
     private val entrenamientoMap = mutableMapOf<String, Int>()
     private val jugadorMap = mutableMapOf<String, Int>()
     private val selectedJugadorIds = mutableListOf<Int>()
-    private var entrenadorPersonaId: Int? = null // ID del entrenador de la tabla `personas`
+    private var entrenadorPersonaId: Int? = null
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentCrearSesionBinding.bind(view)
@@ -37,7 +39,7 @@ class CrearSesionFragment : Fragment(R.layout.fragment_crear_sesion) {
         bottomNavigationView.visibility = View.GONE
 
         setupToolbar()
-        loadEntrenadorId() // Obtener el ID del entrenador desde la tabla `personas`.
+        loadEntrenadorId()
         loadEntrenamientos()
         loadJugadores()
 
@@ -66,7 +68,7 @@ class CrearSesionFragment : Fragment(R.layout.fragment_crear_sesion) {
             try {
                 val response = RetrofitInstance.api.getPersonasByUserId("Bearer $token", userId)
                 if (response.data.isNotEmpty()) {
-                    entrenadorPersonaId = response.data[0].id // Obtener el ID del entrenador de la tabla personas
+                    entrenadorPersonaId = response.data[0].id
                     Log.d("CrearSesion", "Entrenador ID desde personas: $entrenadorPersonaId")
                 } else {
                     Log.e("CrearSesion", "No se encontró el entrenador en la tabla personas.")
@@ -140,11 +142,11 @@ class CrearSesionFragment : Fragment(R.layout.fragment_crear_sesion) {
                 }
             }
             .setPositiveButton("OK") { dialog, _ ->
-                dialog.dismiss() // Cerrar el diálogo al presionar "OK"
+                dialog.dismiss()
                 Toast.makeText(requireContext(), "Jugadores seleccionados: ${selectedJugadorIds.size}", Toast.LENGTH_SHORT).show()
             }
             .setNegativeButton("Cancelar") { dialog, _ ->
-                dialog.dismiss() // Cerrar el diálogo al presionar "Cancelar"
+                dialog.dismiss()
             }
             .show()
     }
@@ -186,7 +188,7 @@ class CrearSesionFragment : Fragment(R.layout.fragment_crear_sesion) {
                 RetrofitInstance.api.createSesion("Bearer $token", request)
                 Toast.makeText(requireContext(), "Sesión creada exitosamente", Toast.LENGTH_SHORT).show()
 
-                // Navegar a la vista de sesiones
+
                 findNavController().navigate(R.id.sesionesFragment)
             } catch (e: Exception) {
                 Log.e("CrearSesion", "Error al crear la sesión: ${e.message}")
@@ -206,3 +208,5 @@ class CrearSesionFragment : Fragment(R.layout.fragment_crear_sesion) {
         bottomNavigationView.visibility = View.VISIBLE
     }
 }
+
+//LOGS Y EXEPCIONES CON IA

@@ -2,11 +2,11 @@ package com.example.trainingroutine_pablocavaz.data.remote.models
 
 data class PersonaWithUserAttributes(
     val Rol: String,
-    val user: UserDataWrapper? // Puede ser null
+    val user: UserDataWrapper?
 )
 
 data class UserDataWrapper(
-    val data: UserAttributesWrapper? // Puede ser null
+    val data: UserAttributesWrapper?
 )
 
 data class UserAttributesWrapper(

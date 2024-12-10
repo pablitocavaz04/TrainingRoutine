@@ -25,10 +25,8 @@ class JugadorAdapter(private val jugadores: List<PersonaWithUserData>) :
     override fun onBindViewHolder(holder: JugadorViewHolder, position: Int) {
         val jugador = jugadores[position]
 
-        // Mostrar el rol
         holder.nombreTextView.text = jugador.attributes.Rol
 
-        // Manejar el email desde la estructura anidada
         val email = jugador.attributes.user?.data?.attributes?.email
         holder.emailTextView.text = email ?: "Email no disponible"
     }

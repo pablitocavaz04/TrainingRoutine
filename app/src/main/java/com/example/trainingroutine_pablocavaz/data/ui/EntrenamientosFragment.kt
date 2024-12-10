@@ -76,3 +76,4 @@ class EntrenamientosFragment : Fragment() {
         }
     }
 }
+//LOG Y EXEPECIONES IA
