@@ -39,7 +39,8 @@ interface ApiService {
 
     @GET("/api/entrenamientos")
     suspend fun getEntrenamientos(
-        @Header("Authorization") token: String
+        @Header("Authorization") token: String,
+        @Query("populate") populate: String = "entreno"
     ): EntrenamientoResponse
 
     @GET("/api/sesiones")
@@ -63,7 +64,4 @@ interface ApiService {
         @Header("Authorization") token: String,
         @Body request: CrearSesionRequest
     )
-
-
-
 }

@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">TrainingRoutine_PabloCavaz</string>
+    <string name="descripcion_imagen_entrenamiento">Imagen del entrenamiento</string>
+
 </resources>

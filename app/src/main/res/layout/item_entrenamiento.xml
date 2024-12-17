@@ -4,6 +4,13 @@
     android:orientation="vertical"
     android:padding="16dp">
 
+    <ImageView
+        android:id="@+id/imageViewEntrenamiento"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:scaleType="centerCrop"
+        android:contentDescription="@string/descripcion_imagen_entrenamiento" />
+
     <TextView
         android:id="@+id/textViewNombreEntrenamiento"
         android:layout_width="wrap_content"
@@ -11,20 +18,20 @@
         android:text="Nombre del Entrenamiento"
         android:textStyle="bold"
         android:textSize="16sp"
-        android:layout_marginBottom="8dp" />
+        android:layout_marginTop="8dp" />
 
     <TextView
         android:id="@+id/textViewDescripcionEntrenamiento"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Descripción"
-        android:layout_marginBottom="8dp" />
+        android:layout_marginTop="4dp" />
 
     <TextView
         android:id="@+id/textViewFechaEntrenamiento"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Fecha"
-        android:layout_marginBottom="8dp" />
+        android:layout_marginTop="4dp" />
 
 </LinearLayout>
