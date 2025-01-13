@@ -26,7 +26,7 @@ class CrearSesionFragment : Fragment(R.layout.fragment_crear_sesion) {
 
     private val entrenamientoMap = mutableMapOf<String, Int>()
     private val jugadorMap = mutableMapOf<String, Int>()
-    private val selectedJugadorIds = mutableListOf<Int>()
+    private val selectedJugadorIds = mutableListOf<Int>() 
     private var entrenadorPersonaId: Int? = null
 
     @SuppressLint("ClickableViewAccessibility")
