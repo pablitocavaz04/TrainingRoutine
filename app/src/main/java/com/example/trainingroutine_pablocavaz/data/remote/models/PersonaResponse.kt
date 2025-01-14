@@ -10,5 +10,29 @@ data class PersonaResponseData(
 )
 
 data class PersonaAttributes(
-    val Rol: String
+    val Rol: String,
+    val user: UserData?,
+    val perfil: Perfil? //Imagen de la tabla persona
+)
+
+data class Perfil(
+    val data: PerfilData?
+)
+
+data class PerfilData(
+    val attributes: PerfilAttributes
+)
+
+data class  PerfilAttributes(
+    val name: String?,
+    val url: String?,
+    val formats: PerfilFormats?
+)
+
+data class PerfilFormats(
+    val small: PerfilFormatDetails?
+)
+
+data class PerfilFormatDetails(
+    val url: String?
 )

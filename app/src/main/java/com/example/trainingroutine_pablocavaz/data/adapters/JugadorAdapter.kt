@@ -6,9 +6,9 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.trainingroutine_pablocavaz.R
-import com.example.trainingroutine_pablocavaz.data.remote.models.PersonaWithUserData
+import com.example.trainingroutine_pablocavaz.data.remote.models.PersonaResponseData
 
-class JugadorAdapter(private val jugadores: List<PersonaWithUserData>) :
+class JugadorAdapter(private val jugadores: List<PersonaResponseData>) :
     RecyclerView.Adapter<JugadorAdapter.JugadorViewHolder>() {
 
     inner class JugadorViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
