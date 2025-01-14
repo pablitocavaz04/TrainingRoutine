@@ -39,8 +39,7 @@ class JugadorAdapter(private val jugadores: List<PersonaResponseData>) :
         val imageUrl = jugador.attributes.perfil?.data?.attributes?.formats?.small?.url
         holder.imagenImageView.load(imageUrl) {
             crossfade(true)
-            placeholder(R.drawable.bmba) // Imagen por defecto mientras carga
-            transformations(CircleCropTransformation())
+            placeholder(R.drawable.bmba)
         }
     }
 

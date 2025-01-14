@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.trainingroutine_pablocavaz.R
@@ -35,10 +36,21 @@ class JugadoresFragment : Fragment() {
             requireContext().getSharedPreferences("prefs", Context.MODE_PRIVATE)
         val token = sharedPreferences.getString("token", null)
 
+        val gridLayoutManager = GridLayoutManager(requireContext(), 2)
+        gridLayoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+            override fun getSpanSize(position: Int): Int {
+                return 1 // Cada elemento ocupa 1 columna
+            }
+        }
+        recyclerView.layoutManager = gridLayoutManager
         if (token != null) {
             fetchJugadores(token)
         } else {
-            Toast.makeText(requireContext(), "Token no disponible. Inicie sesión nuevamente.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                requireContext(),
+                "Token no disponible. Inicie sesión nuevamente.",
+                Toast.LENGTH_SHORT
+            ).show()
         }
     }
 
@@ -48,7 +60,6 @@ class JugadoresFragment : Fragment() {
                 val jugadoresResponse = RetrofitInstance.api.getJugadores("Bearer $token")
                 val jugadores = jugadoresResponse.data
                 recyclerView.adapter = JugadorAdapter(jugadores)
-                recyclerView.layoutManager = LinearLayoutManager(requireContext())
             } catch (e: HttpException) {
                 Toast.makeText(requireContext(), "Error al cargar los jugadores", Toast.LENGTH_SHORT).show()
             } catch (e: Exception) {
@@ -56,5 +67,6 @@ class JugadoresFragment : Fragment() {
             }
         }
     }
+
 }
 //LOGS EXEPCIONES CON IA
