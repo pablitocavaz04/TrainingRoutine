@@ -17,14 +17,11 @@ class PersonaRepository @Inject constructor(
             PersonaEntity(
                 id = persona.id,
                 rol = attributes.Rol ?: "Desconocido",
-                usuarioId = attributes.user?.data?.id ?: 0
+                usuarioId = attributes.user?.data?.id ?: 0,
             )
         }
         personaDao.insertPersonas(personaEntities)
     }
-
-
-
 
     suspend fun getAllPersonas(): List<PersonaEntity> {
         return personaDao.getAllPersonas()

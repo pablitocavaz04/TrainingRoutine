@@ -34,7 +34,7 @@ interface ApiService {
     suspend fun getJugadores(
         @Header("Authorization") token: String,
         @Query("filters[Rol][\$eq]") rol: String = "Jugador",
-        @Query("populate") populate: String = "user"
+        @Query("populate") populate: String = "user,perfil"
     ): PersonaResponse
 
     @GET("/api/entrenamientos")

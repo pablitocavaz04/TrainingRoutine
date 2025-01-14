@@ -7,5 +7,7 @@ import androidx.room.PrimaryKey
 data class PersonaEntity(
     @PrimaryKey val id: Int,
     val rol: String,
-    val usuarioId: Int
+    val usuarioId: Int,
+    val imagen: String? = null
+
 )
