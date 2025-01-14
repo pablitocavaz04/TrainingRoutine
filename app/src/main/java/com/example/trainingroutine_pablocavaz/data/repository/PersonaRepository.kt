@@ -18,6 +18,7 @@ class PersonaRepository @Inject constructor(
                 id = persona.id,
                 rol = attributes.Rol ?: "Desconocido",
                 usuarioId = attributes.user?.data?.id ?: 0,
+                imagen = null
             )
         }
         personaDao.insertPersonas(personaEntities)
