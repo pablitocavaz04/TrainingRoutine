@@ -10,6 +10,9 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import coil3.load
+import coil3.request.crossfade
+import coil3.request.placeholder
 import com.example.trainingroutine_pablocavaz.R
 import com.example.trainingroutine_pablocavaz.data.remote.RetrofitInstance
 import com.example.trainingroutine_pablocavaz.databinding.FragmentUserProfileBinding
@@ -54,16 +57,37 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
     private fun loadUserProfile(token: String) {
         lifecycleScope.launch {
             try {
+                // Obtener detalles del usuario
                 val userDetailsResponse = RetrofitInstance.api.getUserDetails("Bearer $token")
-                val personaResponse = RetrofitInstance.api.getPersonasByUserId("Bearer $token", userDetailsResponse.id.toString())
+
+                // Obtener detalles adicionales de la persona
+                val personaResponse = RetrofitInstance.api.getPersonasByUserId(
+                    "Bearer $token",
+                    userDetailsResponse.id.toString()
+                )
 
                 val userName = userDetailsResponse.username
                 val userEmail = userDetailsResponse.email
                 val userRole = personaResponse.data.firstOrNull()?.attributes?.Rol ?: "Desconocido"
+                val imageUrl = personaResponse.data.firstOrNull()
+                    ?.attributes?.perfil?.data?.attributes?.formats?.small?.url
 
+                // Verificar si la URL de la imagen es válida
+                if (imageUrl != null) {
+                    Log.d("UserProfileFragment", "Cargando imagen desde URL: $imageUrl")
+                    binding.imagenJugadorImageView2.load(imageUrl) {
+                        crossfade(true)
+                        placeholder(R.drawable.bmba) // Imagen predeterminada
+                    }
+                } else {
+                    Log.e("UserProfileFragment", "URL de imagen no disponible")
+                }
+
+                // Asignar datos al perfil
                 binding.userName.text = userName
                 binding.userEmail.text = userEmail
                 binding.userRole.text = userRole
+
             } catch (e: HttpException) {
                 Log.e("UserProfileFragment", "Error al cargar perfil: ${e.response()?.errorBody()?.string()}")
                 Toast.makeText(requireContext(), "Error al cargar perfil del usuario", Toast.LENGTH_SHORT).show()
@@ -79,13 +103,11 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
         sharedPreferences.edit().clear().apply()
         Toast.makeText(requireContext(), "Sesión cerrada", Toast.LENGTH_SHORT).show()
 
-        // Cerrar la app completamente , con chatGPT
+        // Cerrar la app completamente
         requireActivity().finishAffinity()
     }
-
 
     private fun redirectToLogin() {
         findNavController().navigate(R.id.action_userProfileFragment_to_loginFragment)
     }
 }
-//LOGS Y EXCEPCIONES CON IA

@@ -9,8 +9,6 @@ import androidx.recyclerview.widget.RecyclerView
 import coil3.load
 import coil3.request.crossfade
 import coil3.request.placeholder
-import coil3.request.transformations
-import coil3.transform.CircleCropTransformation
 import com.example.trainingroutine_pablocavaz.R
 import com.example.trainingroutine_pablocavaz.data.remote.models.PersonaResponseData
 
