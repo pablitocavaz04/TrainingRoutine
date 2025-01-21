@@ -57,10 +57,8 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
     private fun loadUserProfile(token: String) {
         lifecycleScope.launch {
             try {
-                // Obtener detalles del usuario
                 val userDetailsResponse = RetrofitInstance.api.getUserDetails("Bearer $token")
 
-                // Obtener detalles adicionales de la persona
                 val personaResponse = RetrofitInstance.api.getPersonasByUserId(
                     "Bearer $token",
                     userDetailsResponse.id.toString()
@@ -72,18 +70,15 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
                 val imageUrl = personaResponse.data.firstOrNull()
                     ?.attributes?.perfil?.data?.attributes?.formats?.small?.url
 
-                // Verificar si la URL de la imagen es válida
                 if (imageUrl != null) {
-                    Log.d("UserProfileFragment", "Cargando imagen desde URL: $imageUrl")
                     binding.imagenJugadorImageView2.load(imageUrl) {
                         crossfade(true)
-                        placeholder(R.drawable.bmba) // Imagen predeterminada
+                        placeholder(R.drawable.bmba)
                     }
                 } else {
                     Log.e("UserProfileFragment", "URL de imagen no disponible")
                 }
 
-                // Asignar datos al perfil
                 binding.userName.text = userName
                 binding.userEmail.text = userEmail
                 binding.userRole.text = userRole
@@ -111,3 +106,4 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
         findNavController().navigate(R.id.action_userProfileFragment_to_loginFragment)
     }
 }
+//TODOS LOS LOGS Y CATCH GENERADOS CON LA IA PARA CAPTAR ERRORES
