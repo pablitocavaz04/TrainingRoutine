@@ -10,4 +10,7 @@ buildscript {
     repositories {
         google()
     }
+    dependencies{
+        classpath (libs.secrets.gradle.plugin)
+    }
 }

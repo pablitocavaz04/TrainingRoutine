@@ -23,8 +23,10 @@ navigationFragmentKtx = "2.8.5"
 navigationFragmentKtxVersion = "2.8.5"
 navigationUiKtx = "2.8.5"
 navigationUiKtxVersion = "2.8.5"
+playServicesMaps = "19.0.0"
 retrofit = "2.11.0"
 roomRuntime = "2.6.1"
+secretsGradlePlugin = "2.0.1"
 securityCrypto = "1.1.0-alpha06"
 
 [libraries]
@@ -62,7 +64,9 @@ androidx-activity = { group = "androidx.activity", name = "activity", version.re
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 androidx-navigation-fragment-ktx = { group = "androidx.navigation", name = "navigation-fragment-ktx", version.ref = "navigationFragmentKtx" }
 androidx-navigation-ui-ktx = { group = "androidx.navigation", name = "navigation-ui-ktx", version.ref = "navigationUiKtx" }
+play-services-maps = { module = "com.google.android.gms:play-services-maps", version.ref = "playServicesMaps" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
+secrets-gradle-plugin = { module = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin:secrets-gradle-plugin", version.ref = "secretsGradlePlugin" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
