@@ -91,7 +91,17 @@
                 android:layout_height="wrap_content"
                 android:text="Activa"
                 android:layout_marginTop="8dp"
-                tools:ignore="UseSwitchCompatOrMaterialXml" />  <!--CompatMaterial de ChatGpt-->
+                tools:ignore="UseSwitchCompatOrMaterialXml" />
+
+            <EditText
+                android:id="@+id/editTextDireccion"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Introduce la dirección"
+                android:inputType="text"
+                android:layout_marginBottom="16dp" />
+
+
 
             <!-- Botón Guardar -->
             <Button

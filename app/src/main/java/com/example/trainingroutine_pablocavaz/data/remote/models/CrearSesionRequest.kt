@@ -9,5 +9,8 @@ data class CrearSesionData(
     val estado: Boolean,
     val entrenamiento: Int,
     val jugadores: List<Int>,
-    val entrenador: Int
+    val entrenador: Int,
+    val direccion: String,
+    val latitud: Double,
+    val longitud: Double
 )

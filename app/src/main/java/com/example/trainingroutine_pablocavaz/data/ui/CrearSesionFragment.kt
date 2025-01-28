@@ -11,7 +11,9 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.example.trainingroutine_pablocavaz.BuildConfig
 import com.example.trainingroutine_pablocavaz.R
+import com.example.trainingroutine_pablocavaz.data.remote.GoogleMapsRetrofitInstance
 import com.example.trainingroutine_pablocavaz.data.remote.RetrofitInstance
 import com.example.trainingroutine_pablocavaz.data.remote.models.CrearSesionRequest
 import com.example.trainingroutine_pablocavaz.data.remote.models.CrearSesionData
@@ -26,7 +28,7 @@ class CrearSesionFragment : Fragment(R.layout.fragment_crear_sesion) {
 
     private val entrenamientoMap = mutableMapOf<String, Int>()
     private val jugadorMap = mutableMapOf<String, Int>()
-    private val selectedJugadorIds = mutableListOf<Int>() 
+    private val selectedJugadorIds = mutableListOf<Int>()
     private var entrenadorPersonaId: Int? = null
 
     @SuppressLint("ClickableViewAccessibility")
@@ -78,8 +80,6 @@ class CrearSesionFragment : Fragment(R.layout.fragment_crear_sesion) {
             }
         }
     }
-
-
 
     private fun loadEntrenamientos() {
         val sharedPreferences = requireContext().getSharedPreferences("prefs", Context.MODE_PRIVATE)
@@ -151,34 +151,78 @@ class CrearSesionFragment : Fragment(R.layout.fragment_crear_sesion) {
             .show()
     }
 
-
     private fun guardarSesion() {
         val nombreSesion = binding.inputNombreSesion.text.toString()
         val estadoSesion = binding.switchEstadoSesion.isChecked
-
+        val direccion = binding.editTextDireccion.text.toString()
         val entrenamientoSeleccionado = binding.spinnerEntrenamientos.selectedItem?.toString()
         val entrenamientoId = entrenamientoMap[entrenamientoSeleccionado]
 
-        if (nombreSesion.isEmpty() || entrenamientoId == null || selectedJugadorIds.isEmpty()) {
+        if (nombreSesion.isEmpty() || direccion.isEmpty() || entrenamientoId == null || selectedJugadorIds.isEmpty()) {
             Toast.makeText(requireContext(), "Por favor, completa todos los campos", Toast.LENGTH_SHORT).show()
             return
         }
 
+        obtenerCoordenadas(direccion) { latitud, longitud ->
+            if (latitud != null && longitud != null) {
+                enviarSesion(nombreSesion, estadoSesion, direccion, latitud, longitud, entrenamientoId)
+            } else {
+                Toast.makeText(requireContext(), "No se pudo obtener las coordenadas.", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+
+    private fun obtenerCoordenadas(direccion: String, onResult: (Double?, Double?) -> Unit) {
+        lifecycleScope.launch {
+            try {
+                // Obtener la clave de API desde BuildConfig
+                val apiKey = BuildConfig.MAPS_API_KEY
+                Log.d("GeocodingRequest", "Consultando coordenadas para dirección: $direccion")
+
+                // Llamar a la API de Google
+                val response = GoogleMapsRetrofitInstance.api.getGeocodingData(direccion, apiKey)
+
+                Log.d("GeocodingURL", "URL generada: https://maps.googleapis.com/maps/api/geocode/json?address=$direccion&key=$apiKey")
+
+                if (response.status == "OK") {
+                    val location = response.results.firstOrNull()?.geometry?.location
+                    Log.d("GeocodingResponse", "Coordenadas obtenidas: lat=${location?.lat}, lng=${location?.lng}")
+                    onResult(location?.lat, location?.lng)
+                } else {
+                    Log.e("GeocodingError", "Error en geocodificación: ${response.status}")
+                    Toast.makeText(requireContext(), "Error al obtener coordenadas.", Toast.LENGTH_SHORT).show()
+                    onResult(null, null)
+                }
+            } catch (e: Exception) {
+                Log.e("GeocodingException", "Excepción al obtener coordenadas: ${e.message}")
+                onResult(null, null)
+            }
+        }
+    }
+
+
+
+    private fun enviarSesion(
+        nombreSesion: String,
+        estadoSesion: Boolean,
+        direccion: String,
+        latitud: Double,
+        longitud: Double,
+        entrenamientoId: Int
+    ) {
         lifecycleScope.launch {
             try {
                 val sharedPreferences = requireContext().getSharedPreferences("prefs", Context.MODE_PRIVATE)
                 val token = sharedPreferences.getString("token", null)
-                val entrenadorId = sharedPreferences.getInt("user_id", -1)
-
-                if (entrenadorId == -1) {
-                    Toast.makeText(requireContext(), "No se pudo obtener el ID del entrenador", Toast.LENGTH_SHORT).show()
-                    return@launch
-                }
 
                 val request = CrearSesionRequest(
                     data = CrearSesionData(
                         nombre = nombreSesion,
                         estado = estadoSesion,
+                        direccion = direccion,
+                        latitud = latitud,
+                        longitud = longitud,
                         entrenamiento = entrenamientoId,
                         jugadores = selectedJugadorIds,
                         entrenador = entrenadorPersonaId!!
@@ -186,8 +230,7 @@ class CrearSesionFragment : Fragment(R.layout.fragment_crear_sesion) {
                 )
 
                 RetrofitInstance.api.createSesion("Bearer $token", request)
-                Toast.makeText(requireContext(), "Sesión creada exitosamente", Toast.LENGTH_SHORT).show()
-
+                Toast.makeText(requireContext(), "Sesión creada exitosamente.", Toast.LENGTH_SHORT).show()
 
                 findNavController().navigate(R.id.sesionesFragment)
             } catch (e: Exception) {
@@ -196,7 +239,6 @@ class CrearSesionFragment : Fragment(R.layout.fragment_crear_sesion) {
             }
         }
     }
-
 
 
     override fun onDestroyView() {
@@ -208,5 +250,3 @@ class CrearSesionFragment : Fragment(R.layout.fragment_crear_sesion) {
         bottomNavigationView.visibility = View.VISIBLE
     }
 }
-
-//LOGS Y EXEPCIONES CON IA

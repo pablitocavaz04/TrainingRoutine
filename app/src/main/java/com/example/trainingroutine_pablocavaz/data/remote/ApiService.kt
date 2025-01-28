@@ -65,4 +65,11 @@ interface ApiService {
         @Header("Authorization") token: String,
         @Body request: CrearSesionRequest
     )
+
+    @GET("maps/api/geocode/json")
+    suspend fun getGeocodingData(
+        @Query("address") address: String,
+        @Query("key") apiKey: String
+    ): GeocodingResponse
+
 }
