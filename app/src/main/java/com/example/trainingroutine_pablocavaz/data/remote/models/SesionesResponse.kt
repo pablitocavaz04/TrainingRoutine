@@ -12,6 +12,9 @@ data class SesionData(
 data class SesionAttributes(
     val nombre: String,
     val estado: Boolean,
+    val direccion: String?, // Nueva dirección (opcional)
+    val latitud: Double?,  // Nueva latitud
+    val longitud: Double?, // Nueva longitud
     val entrenamiento: EntrenamientoSesionWrapper?,
     val jugadores: JugadoresSesionWrapper?,
     val entrenador: PersonaSesionWrapper?,
