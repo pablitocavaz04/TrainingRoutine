@@ -12,6 +12,11 @@
         android:id="@+id/entrenamientosFragment"
         android:icon="@drawable/ic_trainings"
         android:title="Entrenamientos" />
+
+    <item android:id="@+id/mapsFragment"
+        android:icon="@drawable/ic_maps"
+        android:title="Mapas"/>
+
     <item
         android:id="@+id/userProfileFragment"
         android:icon="@drawable/ic_user"

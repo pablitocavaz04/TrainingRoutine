@@ -80,4 +80,11 @@
             app:destination="@id/loginFragment" />
     </fragment>
 
+    <!-- Maps Fragment -->
+    <fragment
+        android:id="@+id/mapsFragment"
+        android:name="com.example.trainingroutine_pablocavaz.data.ui.MapsFragment"
+        android:label="Mapas" />
+
+
 </navigation>
