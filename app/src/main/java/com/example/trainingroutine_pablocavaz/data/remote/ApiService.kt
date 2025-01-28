@@ -48,7 +48,7 @@ interface ApiService {
     suspend fun getSesionesCreadas(
         @Header("Authorization") token: String,
         @Query("filters[entrenador][user][id][\$eq]") entrenadorId: Int,
-        @Query("populate") populate: String = "entrenamiento,jugadores,entrenador"
+        @Query("populate") populate: String = "entrenamiento,jugadores,entrenador,sesionpicture"
     ): SesionesResponse
 
 
@@ -56,7 +56,7 @@ interface ApiService {
     suspend fun getSesionesAsignadas(
         @Header("Authorization") token: String,
         @Query("filters[jugadores][user][id][\$eq]") userId: Int,
-        @Query("populate") populate: String = "entrenamiento,jugadores,entrenador"
+        @Query("populate") populate: String = "entrenamiento,jugadores,entrenador,sesionpicture"
     ): SesionesResponse
 
 

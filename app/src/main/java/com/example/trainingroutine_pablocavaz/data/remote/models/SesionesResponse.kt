@@ -14,7 +14,31 @@ data class SesionAttributes(
     val estado: Boolean,
     val entrenamiento: EntrenamientoSesionWrapper?,
     val jugadores: JugadoresSesionWrapper?,
-    val entrenador: PersonaSesionWrapper?
+    val entrenador: PersonaSesionWrapper?,
+    val sesionpicture: Sesionpicture?
+)
+
+data class Sesionpicture(
+    val data: SesionpcitureData?,
+)
+
+data class SesionpcitureData(
+    val attributes : SesionpictureAttributes,
+)
+
+data class  SesionpictureAttributes(
+    val name : String?,
+    val  url : String?,
+    val formats: SesionpictureFormats?
+)
+
+data class SesionpictureFormats(
+    val small : SesionpictureFormatsDetails?,
+    val medium: SesionpictureFormatsDetails?
+)
+
+data class SesionpictureFormatsDetails(
+    val url: String
 )
 
 data class EntrenamientoSesionWrapper(
