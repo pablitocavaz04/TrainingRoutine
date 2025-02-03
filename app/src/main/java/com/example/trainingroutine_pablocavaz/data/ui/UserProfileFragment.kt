@@ -1,5 +1,6 @@
 package com.example.trainingroutine_pablocavaz.data.ui
 
+import android.app.AlertDialog
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
@@ -52,6 +53,11 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
         binding.logoutButton.setOnClickListener {
             logout()
         }
+        //Abrir Seleccion Camara-Galeria
+        binding.floatingActionButtonCamera.setOnClickListener {
+            showImagePickerDialog()
+        }
+
     }
 
     private fun loadUserProfile(token: String) {
@@ -101,6 +107,36 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
         // Cerrar la app completamente
         requireActivity().finishAffinity()
     }
+
+    //Seleccionar Entre camara y galeria de imagenes, iconos de galería con Caracteres, lo mostramos con
+    //un alert
+    private fun showImagePickerDialog() {
+        val options = arrayOf("📷 Cámara", "🖼 Galería")
+
+        AlertDialog.Builder(requireContext())
+            .setTitle("Elige una opción")
+            .setItems(options) { _, which ->
+                when (which) {
+                    0 -> openCamera()
+                    1 -> openGallery()
+                }
+            }
+            .setNegativeButton("Cancelar") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .show()
+    }
+
+    //Funcion Para abirir Camara
+    private fun openCamera() {
+        Toast.makeText(requireContext(), "Abrir cámara (próximo paso)", Toast.LENGTH_SHORT).show()
+    }
+
+    //Funcion Para abrir Galeria
+    private fun openGallery() {
+        Toast.makeText(requireContext(), "Abrir galería (próximo paso)", Toast.LENGTH_SHORT).show()
+    }
+
 
     private fun redirectToLogin() {
         findNavController().navigate(R.id.action_userProfileFragment_to_loginFragment)

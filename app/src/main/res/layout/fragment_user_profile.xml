@@ -66,4 +66,14 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/userRole" />
+
+    <!-- CAMERA botton-->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/floatingActionButtonCamera"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        app:layout_constraintBottom_toBottomOf="@+id/imagenJugadorImageView2"
+        app:layout_constraintEnd_toEndOf="@+id/imagenJugadorImageView2"
+        app:srcCompat="@drawable/photo_camera_24px" />
 </androidx.constraintlayout.widget.ConstraintLayout>
