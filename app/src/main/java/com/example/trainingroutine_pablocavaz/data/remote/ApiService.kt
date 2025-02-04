@@ -1,10 +1,15 @@
 package com.example.trainingroutine_pablocavaz.data.remote
 
 import com.example.trainingroutine_pablocavaz.data.remote.models.*
+import com.google.android.gms.common.api.Response
+import okhttp3.MultipartBody
+import okhttp3.ResponseBody
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
+import retrofit2.http.Multipart
 import retrofit2.http.POST
+import retrofit2.http.Part
 import retrofit2.http.Query
 
 interface ApiService {
@@ -71,5 +76,14 @@ interface ApiService {
         @Query("address") address: String,
         @Query("key") apiKey: String
     ): GeocodingResponse
+
+    @Multipart
+    @POST("/api/upload")
+    suspend fun uploadProfileImage(
+        @Header("Authorization") token: String,
+        @Part image: MultipartBody.Part
+    ): List<UploadResponse>
+
+
 
 }

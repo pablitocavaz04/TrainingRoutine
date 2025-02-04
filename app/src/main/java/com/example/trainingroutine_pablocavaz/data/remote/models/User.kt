@@ -15,3 +15,8 @@ data class User(
     val email: String,
     val persona: PersonaResponse
 )
+
+data class UploadResponse(
+    val id: Int,
+    val url: String
+)
