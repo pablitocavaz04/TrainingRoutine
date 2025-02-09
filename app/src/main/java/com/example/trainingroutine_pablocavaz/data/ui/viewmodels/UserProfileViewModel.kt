@@ -16,7 +16,7 @@ import java.io.File
 
 class UserProfileViewModel : ViewModel() {
 
-    private val _imageUri = MutableStateFlow<Uri?>(null)
+    private val _imageUri = MutableStateFlow<Uri?>(null) // Mantener Uri
     val imageUri: StateFlow<Uri?> = _imageUri.asStateFlow()
 
     private val _uploadSuccess = MutableStateFlow<Boolean?>(null)
@@ -29,6 +29,8 @@ class UserProfileViewModel : ViewModel() {
     fun uploadImageToStrapi(token: String, imageFile: File) {
         viewModelScope.launch {
             try {
+                Log.d("UserProfileViewModel", "Iniciando subida de imagen: ${imageFile.path}")
+
                 val requestFile = imageFile.asRequestBody("image/*".toMediaTypeOrNull())
                 val body = MultipartBody.Part.createFormData("files", imageFile.name, requestFile)
 
@@ -42,9 +44,9 @@ class UserProfileViewModel : ViewModel() {
                     Log.e("UserProfileViewModel", "Error en la subida: Respuesta vacía")
                 }
 
-
             } catch (e: Exception) {
                 _uploadSuccess.value = false
+                Log.e("UserProfileViewModel", "Error al subir imagen: ${e.message}")
             }
         }
     }

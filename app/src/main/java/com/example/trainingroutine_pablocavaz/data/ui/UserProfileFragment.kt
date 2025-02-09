@@ -6,6 +6,8 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
@@ -27,6 +29,7 @@ import com.example.trainingroutine_pablocavaz.data.ui.viewmodels.UserProfileView
 import com.example.trainingroutine_pablocavaz.databinding.FragmentUserProfileBinding
 import kotlinx.coroutines.launch
 import java.io.File
+import java.io.FileOutputStream
 
 class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
 
@@ -71,16 +74,20 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
             showImagePickerDialog()
         }
 
-        // Observar cambios en la imagen seleccionada
         lifecycleScope.launch {
             viewModel.imageUri.collect { uri ->
                 uri?.let {
-                    binding.imagenJugadorImageView2.setImageURI(it)
-                    val file = File(it.path!!)
-                    token?.let { t -> viewModel.uploadImageToStrapi(t, file) }
+                    binding.imagenJugadorImageView2.setImageURI(it) // Asegurar que la imagen se muestre
+                    val file = getFileFromUri(requireContext(), it) // Convertir Uri a File
+                    if (file != null) {
+                        token?.let { t -> viewModel.uploadImageToStrapi(t, file) }
+                    } else {
+                        Toast.makeText(requireContext(), "Error al obtener el archivo", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
         }
+
     }
 
     private fun loadUserProfile(token: String) {
@@ -142,13 +149,11 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA)
             != PackageManager.PERMISSION_GRANTED) {
 
-            // Solicitar permiso
             ActivityCompat.requestPermissions(requireActivity(),
                 arrayOf(Manifest.permission.CAMERA),
                 CAMERA_PERMISSION_REQUEST_CODE
             )
         } else {
-            // Si el permiso ya fue otorgado, abrir la cámara
             val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
             startActivityForResult(intent, CAPTURE_IMAGE_REQUEST)
         }
@@ -163,9 +168,44 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
         super.onActivityResult(requestCode, resultCode, data)
 
         if (resultCode == Activity.RESULT_OK) {
-            val uri = data?.data
-            uri?.let { viewModel.setImageUri(it) }
+            when (requestCode) {
+                PICK_IMAGE_REQUEST -> {
+                    val uri = data?.data
+                    uri?.let { viewModel.setImageUri(it) } // Asegurar que setImageUri reciba Uri
+                }
+                CAPTURE_IMAGE_REQUEST -> {
+                    val bitmap = data?.extras?.get("data") as? Bitmap
+                    if (bitmap != null) {
+                        val file = saveBitmapToFile(requireContext(), bitmap)
+                        val uri = Uri.fromFile(file)
+                        viewModel.setImageUri(uri) // Pasar Uri, no String
+                    } else {
+                        Toast.makeText(requireContext(), "No se pudo capturar la imagen", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
         }
+    }
+
+
+    private fun saveBitmapToFile(context: Context, bitmap: Bitmap): File {
+        val filesDir = context.filesDir
+        val imageFile = File(filesDir, "profile_image_${System.currentTimeMillis()}.jpg")
+
+        FileOutputStream(imageFile).use { outputStream ->
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+        }
+
+        return imageFile
+    }
+
+    private fun getFileFromUri(context: Context, uri: Uri): File? {
+        val inputStream = context.contentResolver.openInputStream(uri) ?: return null
+        val file = File(context.cacheDir, "temp_image_${System.currentTimeMillis()}.jpg")
+        FileOutputStream(file).use { output ->
+            inputStream.copyTo(output)
+        }
+        return file
     }
 
     override fun onRequestPermissionsResult(
@@ -177,15 +217,12 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
 
         if (requestCode == CAMERA_PERMISSION_REQUEST_CODE) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Permiso concedido, abrir la cámara
                 openCamera()
             } else {
-                // Permiso denegado, mostrar mensaje al usuario
                 Toast.makeText(requireContext(), "Permiso de cámara denegado", Toast.LENGTH_SHORT).show()
             }
         }
     }
-
 
     private fun redirectToLogin() {
         Toast.makeText(requireContext(), "Sesión expirada, inicia sesión nuevamente", Toast.LENGTH_SHORT).show()
