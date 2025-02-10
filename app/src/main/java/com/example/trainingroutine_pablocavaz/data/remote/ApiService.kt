@@ -84,6 +84,11 @@ interface ApiService {
         @Part image: MultipartBody.Part
     ): List<UploadResponse>
 
-
+    @retrofit2.http.PUT("/api/personas/{id}")
+    suspend fun updatePersonaProfileImage(
+        @Header("Authorization") token: String,
+        @retrofit2.http.Path("id") personaId: Int,
+        @Body request: UpdatePersonaRequest
+    ): Boolean
 
 }

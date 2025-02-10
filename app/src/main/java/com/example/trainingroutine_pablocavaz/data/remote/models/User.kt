@@ -20,3 +20,11 @@ data class UploadResponse(
     val id: Int,
     val url: String
 )
+
+data class UpdatePersonaRequest(
+    val data: UpdatePersonaData
+)
+
+data class UpdatePersonaData(
+    val perfil: Int
+)

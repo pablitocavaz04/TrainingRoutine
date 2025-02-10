@@ -5,6 +5,8 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.trainingroutine_pablocavaz.data.remote.RetrofitInstance
+import com.example.trainingroutine_pablocavaz.data.remote.models.UpdatePersonaData
+import com.example.trainingroutine_pablocavaz.data.remote.models.UpdatePersonaRequest
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -26,7 +28,14 @@ class UserProfileViewModel : ViewModel() {
         _imageUri.value = uri
     }
 
-    fun uploadImageToStrapi(token: String, imageFile: File) {
+    private val _personaId = MutableStateFlow<Int?>(null)
+    val personaId: StateFlow<Int?> = _personaId.asStateFlow()
+
+    fun setPersonaId(id: Int) {
+        _personaId.value = id
+    }
+
+    fun uploadImageToStrapi(token: String, imageFile: File, personaId: Int) {
         viewModelScope.launch {
             try {
                 Log.d("UserProfileViewModel", "Iniciando subida de imagen: ${imageFile.path}")
@@ -37,8 +46,24 @@ class UserProfileViewModel : ViewModel() {
                 val response = RetrofitInstance.api.uploadProfileImage("Bearer $token", body)
 
                 if (response.isNotEmpty()) {
-                    _uploadSuccess.value = true
+                    val uploadedImageId = response[0].id
                     Log.d("UserProfileViewModel", "Imagen subida correctamente: ${response[0].url}")
+
+                    // ✅ Usamos la nueva data class para la actualización
+                    val updateRequest = UpdatePersonaRequest(UpdatePersonaData(uploadedImageId))
+
+                    val updateResponse = RetrofitInstance.api.updatePersonaProfileImage(
+                        "Bearer $token", personaId, updateRequest
+                    )
+
+                    if (updateResponse) {
+                        _uploadSuccess.value = true
+                        Log.d("UserProfileViewModel", "Imagen asociada al perfil con éxito.")
+                    } else {
+                        _uploadSuccess.value = false
+                        Log.e("UserProfileViewModel", "Error al asociar la imagen al perfil.")
+                    }
+
                 } else {
                     _uploadSuccess.value = false
                     Log.e("UserProfileViewModel", "Error en la subida: Respuesta vacía")
@@ -50,4 +75,5 @@ class UserProfileViewModel : ViewModel() {
             }
         }
     }
+
 }

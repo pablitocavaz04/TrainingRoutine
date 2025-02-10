@@ -73,14 +73,21 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
         binding.floatingActionButtonCamera.setOnClickListener {
             showImagePickerDialog()
         }
-
         lifecycleScope.launch {
             viewModel.imageUri.collect { uri ->
                 uri?.let {
                     binding.imagenJugadorImageView2.setImageURI(it) // Asegurar que la imagen se muestre
                     val file = getFileFromUri(requireContext(), it) // Convertir Uri a File
                     if (file != null) {
-                        token?.let { t -> viewModel.uploadImageToStrapi(t, file) }
+                        token?.let { t ->
+                            viewModel.personaId.collect { personaId ->
+                                if (personaId != null && personaId != -1) {
+                                    viewModel.uploadImageToStrapi(t, file, personaId)
+                                } else {
+                                    Toast.makeText(requireContext(), "Error: Persona no encontrada", Toast.LENGTH_SHORT).show()
+                                }
+                            }
+                        }
                     } else {
                         Toast.makeText(requireContext(), "Error al obtener el archivo", Toast.LENGTH_SHORT).show()
                     }
@@ -98,11 +105,13 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
                     "Bearer $token", userDetailsResponse.id.toString()
                 )
 
+                val personaId = personaResponse.data.firstOrNull()?.id ?: -1
+                viewModel.setPersonaId(personaId) // ✅ Guardamos el personaId en el ViewModel
+
                 val userName = userDetailsResponse.username
                 val userEmail = userDetailsResponse.email
                 val userRole = personaResponse.data.firstOrNull()?.attributes?.Rol ?: "Desconocido"
-                val imageUrl = personaResponse.data.firstOrNull()
-                    ?.attributes?.perfil?.data?.attributes?.formats?.small?.url
+                val imageUrl = personaResponse.data.firstOrNull()?.attributes?.perfil?.data?.attributes?.formats?.small?.url
 
                 if (imageUrl != null) {
                     binding.imagenJugadorImageView2.load(imageUrl) {
@@ -120,6 +129,8 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
             }
         }
     }
+
+
 
     private fun logout() {
         val sharedPreferences = requireContext().getSharedPreferences("prefs", Context.MODE_PRIVATE)
