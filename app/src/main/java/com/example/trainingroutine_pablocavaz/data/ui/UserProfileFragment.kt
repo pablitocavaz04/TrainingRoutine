@@ -73,29 +73,17 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
         binding.floatingActionButtonCamera.setOnClickListener {
             showImagePickerDialog()
         }
+
+        // ✅ Eliminamos la subida automática de imagen aquí
         lifecycleScope.launch {
             viewModel.imageUri.collect { uri ->
                 uri?.let {
                     binding.imagenJugadorImageView2.setImageURI(it) // Asegurar que la imagen se muestre
-                    val file = getFileFromUri(requireContext(), it) // Convertir Uri a File
-                    if (file != null) {
-                        token?.let { t ->
-                            viewModel.personaId.collect { personaId ->
-                                if (personaId != null && personaId != -1) {
-                                    viewModel.uploadImageToStrapi(t, file, personaId)
-                                } else {
-                                    Toast.makeText(requireContext(), "Error: Persona no encontrada", Toast.LENGTH_SHORT).show()
-                                }
-                            }
-                        }
-                    } else {
-                        Toast.makeText(requireContext(), "Error al obtener el archivo", Toast.LENGTH_SHORT).show()
-                    }
                 }
             }
         }
-
     }
+
 
     private fun loadUserProfile(token: String) {
         lifecycleScope.launch {
@@ -182,19 +170,43 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
             when (requestCode) {
                 PICK_IMAGE_REQUEST -> {
                     val uri = data?.data
-                    uri?.let { viewModel.setImageUri(it) } // Asegurar que setImageUri reciba Uri
+                    uri?.let {
+                        viewModel.setImageUri(it)
+                        subirImagen(uri) // ✅ Llamamos a la función de subida aquí
+                    }
                 }
                 CAPTURE_IMAGE_REQUEST -> {
                     val bitmap = data?.extras?.get("data") as? Bitmap
                     if (bitmap != null) {
                         val file = saveBitmapToFile(requireContext(), bitmap)
                         val uri = Uri.fromFile(file)
-                        viewModel.setImageUri(uri) // Pasar Uri, no String
+                        viewModel.setImageUri(uri)
+                        subirImagen(uri) // ✅ Llamamos a la función de subida aquí
                     } else {
                         Toast.makeText(requireContext(), "No se pudo capturar la imagen", Toast.LENGTH_SHORT).show()
                     }
                 }
             }
+        }
+    }
+
+    private fun subirImagen(uri: Uri) {
+        val token = requireContext().getSharedPreferences("prefs", Context.MODE_PRIVATE)
+            .getString("token", null)
+        val file = getFileFromUri(requireContext(), uri)
+
+        if (file != null && token != null) {
+            lifecycleScope.launch {
+                viewModel.personaId.collect { personaId ->
+                    if (personaId != null && personaId != -1) {
+                        viewModel.uploadImageToStrapi(token, file, personaId)
+                    } else {
+                        Toast.makeText(requireContext(), "Error: Persona no encontrada", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+        } else {
+            Toast.makeText(requireContext(), "Error al obtener el archivo", Toast.LENGTH_SHORT).show()
         }
     }
 

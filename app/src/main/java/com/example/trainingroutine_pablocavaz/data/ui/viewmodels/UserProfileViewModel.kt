@@ -47,18 +47,19 @@ class UserProfileViewModel : ViewModel() {
 
                 if (response.isNotEmpty()) {
                     val uploadedImageId = response[0].id
-                    Log.d("UserProfileViewModel", "Imagen subida correctamente: ${response[0].url}")
+                    val uploadedImageUrl = response[0].url
+                    Log.d("UserProfileViewModel", "Imagen subida correctamente: $uploadedImageUrl")
 
-                    // ✅ Usamos la nueva data class para la actualización
+                    // ✅ Usamos la data class existente para actualizar el perfil
                     val updateRequest = UpdatePersonaRequest(UpdatePersonaData(uploadedImageId))
 
                     val updateResponse = RetrofitInstance.api.updatePersonaProfileImage(
                         "Bearer $token", personaId, updateRequest
                     )
 
-                    if (updateResponse) {
+                    if (updateResponse.data.firstOrNull()?.attributes?.perfil?.data != null) {
                         _uploadSuccess.value = true
-                        Log.d("UserProfileViewModel", "Imagen asociada al perfil con éxito.")
+                        Log.d("UserProfileViewModel", "Imagen asociada al perfil con éxito: ${updateResponse.data.firstOrNull()?.attributes?.perfil?.data?.attributes?.url}")
                     } else {
                         _uploadSuccess.value = false
                         Log.e("UserProfileViewModel", "Error al asociar la imagen al perfil.")

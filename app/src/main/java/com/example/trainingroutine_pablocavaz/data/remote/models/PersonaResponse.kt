@@ -36,3 +36,11 @@ data class PerfilFormats(
 data class PerfilFormatDetails(
     val url: String?
 )
+
+data class UpdatePersonaRequest(
+    val data: UpdatePersonaData
+)
+
+data class UpdatePersonaData(
+    val perfil: Int
+)

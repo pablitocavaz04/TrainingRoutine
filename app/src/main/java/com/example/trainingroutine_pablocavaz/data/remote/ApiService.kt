@@ -1,9 +1,7 @@
 package com.example.trainingroutine_pablocavaz.data.remote
 
 import com.example.trainingroutine_pablocavaz.data.remote.models.*
-import com.google.android.gms.common.api.Response
 import okhttp3.MultipartBody
-import okhttp3.ResponseBody
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
@@ -89,6 +87,7 @@ interface ApiService {
         @Header("Authorization") token: String,
         @retrofit2.http.Path("id") personaId: Int,
         @Body request: UpdatePersonaRequest
-    ): Boolean
+    ): PersonaResponse
+
 
 }
