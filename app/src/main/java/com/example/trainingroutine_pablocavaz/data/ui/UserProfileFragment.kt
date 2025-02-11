@@ -10,7 +10,6 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -57,8 +56,9 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val sharedPreferences = requireContext().getSharedPreferences("prefs", Context.MODE_PRIVATE)
-        val token = sharedPreferences.getString("token", null)
+        val token = requireContext()
+            .getSharedPreferences("prefs", Context.MODE_PRIVATE)
+            .getString("token", null)
 
         if (token != null) {
             loadUserProfile(token)
@@ -66,24 +66,15 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
             redirectToLogin()
         }
 
-        binding.logoutButton.setOnClickListener {
-            logout()
-        }
+        binding.logoutButton.setOnClickListener { logout() }
+        binding.floatingActionButtonCamera.setOnClickListener { showImagePickerDialog() }
 
-        binding.floatingActionButtonCamera.setOnClickListener {
-            showImagePickerDialog()
-        }
-
-        // ✅ Eliminamos la subida automática de imagen aquí
         lifecycleScope.launch {
             viewModel.imageUri.collect { uri ->
-                uri?.let {
-                    binding.imagenJugadorImageView2.setImageURI(it) // Asegurar que la imagen se muestre
-                }
+                uri?.let { binding.imagenJugadorImageView2.setImageURI(it) }
             }
         }
     }
-
 
     private fun loadUserProfile(token: String) {
         lifecycleScope.launch {
@@ -94,11 +85,8 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
                 )
 
                 val personaId = personaResponse.data.firstOrNull()?.id ?: -1
-                viewModel.setPersonaId(personaId) // ✅ Guardamos el personaId en el ViewModel
+                viewModel.setPersonaId(personaId)
 
-                val userName = userDetailsResponse.username
-                val userEmail = userDetailsResponse.email
-                val userRole = personaResponse.data.firstOrNull()?.attributes?.Rol ?: "Desconocido"
                 val imageUrl = personaResponse.data.firstOrNull()?.attributes?.perfil?.data?.attributes?.formats?.small?.url
 
                 if (imageUrl != null) {
@@ -108,59 +96,51 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
                     }
                 }
 
-                binding.userName.text = userName
-                binding.userEmail.text = userEmail
-                binding.userRole.text = userRole
+                binding.userName.text = userDetailsResponse.username
+                binding.userEmail.text = userDetailsResponse.email
+                binding.userRole.text = personaResponse.data.firstOrNull()?.attributes?.Rol ?: "Desconocido"
 
-            } catch (e: Exception) {
-                Log.e("UserProfileFragment", "Error al cargar perfil: ${e.message}")
-            }
+            } catch (_: Exception) { }
         }
     }
 
-
-
     private fun logout() {
-        val sharedPreferences = requireContext().getSharedPreferences("prefs", Context.MODE_PRIVATE)
-        sharedPreferences.edit().clear().apply()
+        requireContext().getSharedPreferences("prefs", Context.MODE_PRIVATE)
+            .edit().clear().apply()
         Toast.makeText(requireContext(), "Sesión cerrada", Toast.LENGTH_SHORT).show()
         requireActivity().finishAffinity()
     }
 
     private fun showImagePickerDialog() {
-        val options = arrayOf("📷 Cámara", "🖼 Galería")
-
         AlertDialog.Builder(requireContext())
             .setTitle("Elige una opción")
-            .setItems(options) { _, which ->
+            .setItems(arrayOf("📷 Cámara", "🖼 Galería")) { _, which ->
                 when (which) {
                     0 -> openCamera()
                     1 -> openGallery()
                 }
             }
-            .setNegativeButton("Cancelar") { dialog, _ ->
-                dialog.dismiss()
-            }
+            .setNegativeButton("Cancelar") { dialog, _ -> dialog.dismiss() }
             .show()
     }
 
     private fun openCamera() {
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA)
             != PackageManager.PERMISSION_GRANTED) {
-
             ActivityCompat.requestPermissions(requireActivity(),
                 arrayOf(Manifest.permission.CAMERA),
                 CAMERA_PERMISSION_REQUEST_CODE
             )
         } else {
-            val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-            startActivityForResult(intent, CAPTURE_IMAGE_REQUEST)
+            startActivityForResult(Intent(MediaStore.ACTION_IMAGE_CAPTURE), CAPTURE_IMAGE_REQUEST)
         }
     }
 
     private fun openGallery() {
-        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-        startActivityForResult(intent, PICK_IMAGE_REQUEST)
+        startActivityForResult(
+            Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI),
+            PICK_IMAGE_REQUEST
+        )
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -168,81 +148,39 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
 
         if (resultCode == Activity.RESULT_OK) {
             when (requestCode) {
-                PICK_IMAGE_REQUEST -> {
-                    val uri = data?.data
-                    uri?.let {
-                        viewModel.setImageUri(it)
-                        subirImagen(uri) // ✅ Llamamos a la función de subida aquí
-                    }
-                }
-                CAPTURE_IMAGE_REQUEST -> {
-                    val bitmap = data?.extras?.get("data") as? Bitmap
-                    if (bitmap != null) {
-                        val file = saveBitmapToFile(requireContext(), bitmap)
-                        val uri = Uri.fromFile(file)
-                        viewModel.setImageUri(uri)
-                        subirImagen(uri) // ✅ Llamamos a la función de subida aquí
-                    } else {
-                        Toast.makeText(requireContext(), "No se pudo capturar la imagen", Toast.LENGTH_SHORT).show()
-                    }
+                PICK_IMAGE_REQUEST -> data?.data?.let { subirImagen(it) }
+                CAPTURE_IMAGE_REQUEST -> (data?.extras?.get("data") as? Bitmap)?.let {
+                    subirImagen(Uri.fromFile(saveBitmapToFile(requireContext(), it)))
                 }
             }
         }
     }
 
     private fun subirImagen(uri: Uri) {
-        val token = requireContext().getSharedPreferences("prefs", Context.MODE_PRIVATE)
-            .getString("token", null)
-        val file = getFileFromUri(requireContext(), uri)
-
-        if (file != null && token != null) {
-            lifecycleScope.launch {
-                viewModel.personaId.collect { personaId ->
-                    if (personaId != null && personaId != -1) {
-                        viewModel.uploadImageToStrapi(token, file, personaId)
-                    } else {
-                        Toast.makeText(requireContext(), "Error: Persona no encontrada", Toast.LENGTH_SHORT).show()
+        requireContext().getSharedPreferences("prefs", Context.MODE_PRIVATE)
+            .getString("token", null)?.let { token ->
+                getFileFromUri(requireContext(), uri)?.let { file ->
+                    lifecycleScope.launch {
+                        viewModel.personaId.collect { personaId ->
+                            if (personaId != null && personaId != -1) {
+                                viewModel.uploadImageToStrapi(token, file, personaId)
+                            }
+                        }
                     }
                 }
             }
-        } else {
-            Toast.makeText(requireContext(), "Error al obtener el archivo", Toast.LENGTH_SHORT).show()
-        }
     }
 
-
     private fun saveBitmapToFile(context: Context, bitmap: Bitmap): File {
-        val filesDir = context.filesDir
-        val imageFile = File(filesDir, "profile_image_${System.currentTimeMillis()}.jpg")
-
-        FileOutputStream(imageFile).use { outputStream ->
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+        return File(context.filesDir, "profile_image_${System.currentTimeMillis()}.jpg").apply {
+            FileOutputStream(this).use { bitmap.compress(Bitmap.CompressFormat.JPEG, 100, it) }
         }
-
-        return imageFile
     }
 
     private fun getFileFromUri(context: Context, uri: Uri): File? {
-        val inputStream = context.contentResolver.openInputStream(uri) ?: return null
-        val file = File(context.cacheDir, "temp_image_${System.currentTimeMillis()}.jpg")
-        FileOutputStream(file).use { output ->
-            inputStream.copyTo(output)
-        }
-        return file
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-
-        if (requestCode == CAMERA_PERMISSION_REQUEST_CODE) {
-            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                openCamera()
-            } else {
-                Toast.makeText(requireContext(), "Permiso de cámara denegado", Toast.LENGTH_SHORT).show()
+        return context.contentResolver.openInputStream(uri)?.let { inputStream ->
+            File(context.cacheDir, "temp_image_${System.currentTimeMillis()}.jpg").apply {
+                FileOutputStream(this).use { inputStream.copyTo(it) }
             }
         }
     }
