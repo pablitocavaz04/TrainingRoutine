@@ -3,7 +3,6 @@ package com.example.trainingroutine_pablocavaz.data.ui
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Toast
@@ -36,19 +35,14 @@ class CrearSesionFragment : Fragment(R.layout.fragment_crear_sesion) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentCrearSesionBinding.bind(view)
 
-        val bottomNavigationView =
-            requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavigationView)
-        bottomNavigationView.visibility = View.GONE
+        requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavigationView).visibility = View.GONE
 
         setupToolbar()
         loadEntrenadorId()
         loadEntrenamientos()
         loadJugadores()
 
-        binding.btnGuardarSesion.setOnClickListener {
-            guardarSesion()
-        }
-
+        binding.btnGuardarSesion.setOnClickListener { guardarSesion() }
         binding.spinnerJugadores.setOnTouchListener { _, _ ->
             showJugadorSelectionDialog()
             true
@@ -56,70 +50,45 @@ class CrearSesionFragment : Fragment(R.layout.fragment_crear_sesion) {
     }
 
     private fun setupToolbar() {
-        binding.toolbar.setNavigationOnClickListener {
-            findNavController().navigateUp()
-        }
+        binding.toolbar.setNavigationOnClickListener { findNavController().navigateUp() }
     }
 
     private fun loadEntrenadorId() {
-        val sharedPreferences = requireContext().getSharedPreferences("prefs", Context.MODE_PRIVATE)
-        val token = sharedPreferences.getString("token", null)
-        val userId = sharedPreferences.getInt("user_id", -1).toString()
+        val token = requireContext().getSharedPreferences("prefs", Context.MODE_PRIVATE)
+            .getString("token", null)
+        val userId = requireContext().getSharedPreferences("prefs", Context.MODE_PRIVATE)
+            .getInt("user_id", -1).toString()
 
         lifecycleScope.launch {
-            try {
-                val response = RetrofitInstance.api.getPersonasByUserId("Bearer $token", userId)
-                if (response.data.isNotEmpty()) {
-                    entrenadorPersonaId = response.data[0].id
-                    Log.d("CrearSesion", "Entrenador ID desde personas: $entrenadorPersonaId")
-                } else {
-                    Log.e("CrearSesion", "No se encontró el entrenador en la tabla personas.")
-                }
-            } catch (e: Exception) {
-                Log.e("CrearSesion", "Error al cargar el ID del entrenador: ${e.message}")
-            }
+            RetrofitInstance.api.getPersonasByUserId("Bearer $token", userId).data
+                .firstOrNull()?.let { entrenadorPersonaId = it.id }
         }
     }
 
     private fun loadEntrenamientos() {
-        val sharedPreferences = requireContext().getSharedPreferences("prefs", Context.MODE_PRIVATE)
-        val token = sharedPreferences.getString("token", null)
+        val token = requireContext().getSharedPreferences("prefs", Context.MODE_PRIVATE)
+            .getString("token", null)
 
         lifecycleScope.launch {
-            try {
-                val response = RetrofitInstance.api.getEntrenamientos("Bearer $token")
-                entrenamientoMap.clear()
-                response.data.forEach {
-                    entrenamientoMap[it.attributes.nombre] = it.id
-                }
-
-                val adapter = ArrayAdapter(
-                    requireContext(),
-                    android.R.layout.simple_spinner_item,
-                    entrenamientoMap.keys.toList()
-                )
-                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-                binding.spinnerEntrenamientos.adapter = adapter
-            } catch (e: Exception) {
-                Toast.makeText(requireContext(), "Error al cargar entrenamientos: ${e.message}", Toast.LENGTH_SHORT).show()
+            RetrofitInstance.api.getEntrenamientos("Bearer $token").data.forEach {
+                entrenamientoMap[it.attributes.nombre] = it.id
             }
+
+            binding.spinnerEntrenamientos.adapter = ArrayAdapter(
+                requireContext(),
+                android.R.layout.simple_spinner_item,
+                entrenamientoMap.keys.toList()
+            ).apply { setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item) }
         }
     }
 
     private fun loadJugadores() {
-        val sharedPreferences = requireContext().getSharedPreferences("prefs", Context.MODE_PRIVATE)
-        val token = sharedPreferences.getString("token", null)
+        val token = requireContext().getSharedPreferences("prefs", Context.MODE_PRIVATE)
+            .getString("token", null)
 
         lifecycleScope.launch {
-            try {
-                val response = RetrofitInstance.api.getJugadores("Bearer $token")
-                jugadorMap.clear()
-                response.data.forEach {
-                    val jugadorNombre = it.attributes.user?.data?.attributes?.username ?: "Sin nombre"
-                    jugadorMap[jugadorNombre] = it.id
-                }
-            } catch (e: Exception) {
-                Toast.makeText(requireContext(), "Error al cargar jugadores: ${e.message}", Toast.LENGTH_SHORT).show()
+            RetrofitInstance.api.getJugadores("Bearer $token").data.forEach {
+                jugadorMap[it.attributes.user?.data?.attributes?.username ?: "Sin nombre"] = it.id
             }
         }
     }
@@ -133,21 +102,12 @@ class CrearSesionFragment : Fragment(R.layout.fragment_crear_sesion) {
         AlertDialog.Builder(requireContext())
             .setTitle("Selecciona jugadores")
             .setMultiChoiceItems(jugadorNames, selectedItems) { _, which, isChecked ->
-                val jugadorName = jugadorNames[which]
-                val jugadorId = jugadorMap[jugadorName]
-                if (isChecked) {
-                    jugadorId?.let { selectedJugadorIds.add(it) }
-                } else {
-                    jugadorId?.let { selectedJugadorIds.remove(it) }
+                jugadorMap[jugadorNames[which]]?.let {
+                    if (isChecked) selectedJugadorIds.add(it) else selectedJugadorIds.remove(it)
                 }
             }
-            .setPositiveButton("OK") { dialog, _ ->
-                dialog.dismiss()
-                Toast.makeText(requireContext(), "Jugadores seleccionados: ${selectedJugadorIds.size}", Toast.LENGTH_SHORT).show()
-            }
-            .setNegativeButton("Cancelar") { dialog, _ ->
-                dialog.dismiss()
-            }
+            .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
+            .setNegativeButton("Cancelar") { dialog, _ -> dialog.dismiss() }
             .show()
     }
 
@@ -155,11 +115,10 @@ class CrearSesionFragment : Fragment(R.layout.fragment_crear_sesion) {
         val nombreSesion = binding.inputNombreSesion.text.toString()
         val estadoSesion = binding.switchEstadoSesion.isChecked
         val direccion = binding.editTextDireccion.text.toString()
-        val entrenamientoSeleccionado = binding.spinnerEntrenamientos.selectedItem?.toString()
-        val entrenamientoId = entrenamientoMap[entrenamientoSeleccionado]
+        val entrenamientoId = entrenamientoMap[binding.spinnerEntrenamientos.selectedItem?.toString()]
 
         if (nombreSesion.isEmpty() || direccion.isEmpty() || entrenamientoId == null || selectedJugadorIds.isEmpty()) {
-            Toast.makeText(requireContext(), "Por favor, completa todos los campos", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "Completa todos los campos", Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -172,36 +131,16 @@ class CrearSesionFragment : Fragment(R.layout.fragment_crear_sesion) {
         }
     }
 
-
     private fun obtenerCoordenadas(direccion: String, onResult: (Double?, Double?) -> Unit) {
         lifecycleScope.launch {
-            try {
-                // Obtener la clave de API desde BuildConfig
-                val apiKey = BuildConfig.MAPS_API_KEY
-                Log.d("GeocodingRequest", "Consultando coordenadas para dirección: $direccion")
+            val apiKey = BuildConfig.MAPS_API_KEY
+            val response = GoogleMapsRetrofitInstance.api.getGeocodingData(direccion, apiKey)
 
-                // Llamar a la API de Google
-                val response = GoogleMapsRetrofitInstance.api.getGeocodingData(direccion, apiKey)
-
-                Log.d("GeocodingURL", "URL generada: https://maps.googleapis.com/maps/api/geocode/json?address=$direccion&key=$apiKey")
-
-                if (response.status == "OK") {
-                    val location = response.results.firstOrNull()?.geometry?.location
-                    Log.d("GeocodingResponse", "Coordenadas obtenidas: lat=${location?.lat}, lng=${location?.lng}")
-                    onResult(location?.lat, location?.lng)
-                } else {
-                    Log.e("GeocodingError", "Error en geocodificación: ${response.status}")
-                    Toast.makeText(requireContext(), "Error al obtener coordenadas.", Toast.LENGTH_SHORT).show()
-                    onResult(null, null)
-                }
-            } catch (e: Exception) {
-                Log.e("GeocodingException", "Excepción al obtener coordenadas: ${e.message}")
-                onResult(null, null)
-            }
+            response.results.firstOrNull()?.geometry?.location?.let {
+                onResult(it.lat, it.lng)
+            } ?: onResult(null, null)
         }
     }
-
-
 
     private fun enviarSesion(
         nombreSesion: String,
@@ -212,41 +151,31 @@ class CrearSesionFragment : Fragment(R.layout.fragment_crear_sesion) {
         entrenamientoId: Int
     ) {
         lifecycleScope.launch {
-            try {
-                val sharedPreferences = requireContext().getSharedPreferences("prefs", Context.MODE_PRIVATE)
-                val token = sharedPreferences.getString("token", null)
+            val token = requireContext().getSharedPreferences("prefs", Context.MODE_PRIVATE)
+                .getString("token", null)
 
-                val request = CrearSesionRequest(
-                    data = CrearSesionData(
-                        nombre = nombreSesion,
-                        estado = estadoSesion,
-                        direccion = direccion,
-                        latitud = latitud,
-                        longitud = longitud,
-                        entrenamiento = entrenamientoId,
-                        jugadores = selectedJugadorIds,
-                        entrenador = entrenadorPersonaId!!
-                    )
+            val request = CrearSesionRequest(
+                data = CrearSesionData(
+                    nombre = nombreSesion,
+                    estado = estadoSesion,
+                    direccion = direccion,
+                    latitud = latitud,
+                    longitud = longitud,
+                    entrenamiento = entrenamientoId,
+                    jugadores = selectedJugadorIds,
+                    entrenador = entrenadorPersonaId ?: return@launch
                 )
+            )
 
-                RetrofitInstance.api.createSesion("Bearer $token", request)
-                Toast.makeText(requireContext(), "Sesión creada exitosamente.", Toast.LENGTH_SHORT).show()
-
-                findNavController().navigate(R.id.sesionesFragment)
-            } catch (e: Exception) {
-                Log.e("CrearSesion", "Error al crear la sesión: ${e.message}")
-                Toast.makeText(requireContext(), "Error al crear la sesión: ${e.message}", Toast.LENGTH_SHORT).show()
-            }
+            RetrofitInstance.api.createSesion("Bearer $token", request)
+            Toast.makeText(requireContext(), "Sesión creada exitosamente.", Toast.LENGTH_SHORT).show()
+            findNavController().navigate(R.id.sesionesFragment)
         }
     }
-
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-
-        val bottomNavigationView =
-            requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavigationView)
-        bottomNavigationView.visibility = View.VISIBLE
+        requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavigationView).visibility = View.VISIBLE
     }
 }
