@@ -75,5 +75,5 @@
         android:clickable="true"
         app:layout_constraintBottom_toBottomOf="@+id/imagenJugadorImageView2"
         app:layout_constraintEnd_toEndOf="@+id/imagenJugadorImageView2"
-        app:srcCompat="@drawable/photo_camera_24px" />
+        app:srcCompat="@drawable/ic_camera" />
 </androidx.constraintlayout.widget.ConstraintLayout>

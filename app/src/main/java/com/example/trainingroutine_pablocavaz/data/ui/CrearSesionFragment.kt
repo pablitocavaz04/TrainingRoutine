@@ -1,12 +1,21 @@
 package com.example.trainingroutine_pablocavaz.data.ui
 
+import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -30,6 +39,9 @@ class CrearSesionFragment : Fragment(R.layout.fragment_crear_sesion) {
     private val selectedJugadorIds = mutableListOf<Int>()
     private var entrenadorPersonaId: Int? = null
 
+    private val CAMERA_REQUEST_CODE = 100
+    private val GALLERY_REQUEST_CODE = 200
+
     @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -47,10 +59,43 @@ class CrearSesionFragment : Fragment(R.layout.fragment_crear_sesion) {
             showJugadorSelectionDialog()
             true
         }
+
+        binding.btnCamara.setOnClickListener { abrirCamara() }
+        binding.btnGaleria.setOnClickListener { abrirGaleria() }
     }
 
     private fun setupToolbar() {
         binding.toolbar.setNavigationOnClickListener { findNavController().navigateUp() }
+    }
+
+    private fun abrirCamara() {
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.CAMERA), CAMERA_REQUEST_CODE)
+        } else {
+            val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+            startActivityForResult(intent, CAMERA_REQUEST_CODE)
+        }
+    }
+
+    private fun abrirGaleria() {
+        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        startActivityForResult(intent, GALLERY_REQUEST_CODE)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == Activity.RESULT_OK) {
+            when (requestCode) {
+                CAMERA_REQUEST_CODE -> {
+                    val imageBitmap = data?.extras?.get("data") as Bitmap
+                    binding.imageViewSesion.setImageBitmap(imageBitmap)
+                }
+                GALLERY_REQUEST_CODE -> {
+                    val imageUri: Uri? = data?.data
+                    binding.imageViewSesion.setImageURI(imageUri)
+                }
+            }
+        }
     }
 
     private fun loadEntrenadorId() {

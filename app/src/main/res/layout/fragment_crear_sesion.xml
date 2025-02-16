@@ -101,7 +101,40 @@
                 android:inputType="text"
                 android:layout_marginBottom="16dp" />
 
+            <!-- Marco para mostrar la imagen seleccionada -->
+            <ImageView
+                android:id="@+id/imageView_sesion"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:layout_gravity="center"
+                android:scaleType="centerCrop"
+                android:background="@android:color/darker_gray"
+                android:contentDescription="Imagen de la sesión" />
 
+            <!-- Botones de selección de imagen -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_marginTop="16dp">
+
+                <Button
+                    android:id="@+id/btn_camara"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:drawableLeft="@drawable/ic_camera"
+                    android:text="Cámara" />
+
+                <Button
+                    android:id="@+id/btn_galeria"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:drawableLeft="@drawable/ic_gallery"
+                    android:text="Galería" />
+            </LinearLayout>
 
             <!-- Botón Guardar -->
             <Button
