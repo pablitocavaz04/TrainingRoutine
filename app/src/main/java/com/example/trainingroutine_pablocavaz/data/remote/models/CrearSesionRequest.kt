@@ -13,6 +13,6 @@ data class CrearSesionData(
     val direccion: String,
     val latitud: Double,
     val longitud: Double,
-    val sesionPicture: String?,
+    val sesionpicture: Int?
 
     )

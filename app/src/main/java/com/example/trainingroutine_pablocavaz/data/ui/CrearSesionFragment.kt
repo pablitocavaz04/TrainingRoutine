@@ -113,7 +113,7 @@ class CrearSesionFragment : Fragment(R.layout.fragment_crear_sesion) {
     }
 
 
-    private suspend fun subirImagenAStrapi(): String? {
+    private suspend fun subirImagenAStrapi(): Int? {
         if (imageUri == null) return null
 
         val token = requireContext().getSharedPreferences("prefs", Context.MODE_PRIVATE)
@@ -125,12 +125,18 @@ class CrearSesionFragment : Fragment(R.layout.fragment_crear_sesion) {
 
         return try {
             val response = RetrofitInstance.api.uploadImage("Bearer $token", body)
-            response.firstOrNull()?.url // Devolvemos la URL de la imagen subida
+            val imageId = response.firstOrNull()?.id // ✅ Devuelve el ID en lugar de la URL
+            println("🔹 ID de la imagen subida: $imageId") // ✅ Verifica en Logcat
+            imageId
         } catch (e: Exception) {
+            e.printStackTrace()
             Toast.makeText(requireContext(), "Error al subir la imagen", Toast.LENGTH_SHORT).show()
             null
         }
     }
+
+
+
 
     // Obtiene la ruta real del archivo desde un Uri
     private fun getRealPathFromUri(context: Context, uri: Uri): String {
@@ -218,15 +224,14 @@ class CrearSesionFragment : Fragment(R.layout.fragment_crear_sesion) {
         obtenerCoordenadas(direccion) { latitud, longitud ->
             if (latitud != null && longitud != null) {
                 lifecycleScope.launch {
-                    val imageUrl = subirImagenAStrapi() // Subimos la imagen primero
-                    enviarSesion(nombreSesion, estadoSesion, direccion, latitud, longitud, entrenamientoId, imageUrl)
+                    val imagenId = subirImagenAStrapi() // ✅ Primero subimos la imagen y obtenemos su ID
+                    enviarSesion(nombreSesion, estadoSesion, direccion, latitud, longitud, entrenamientoId, imagenId)
                 }
             } else {
                 Toast.makeText(requireContext(), "No se pudo obtener las coordenadas.", Toast.LENGTH_SHORT).show()
             }
         }
     }
-
 
     private fun obtenerCoordenadas(direccion: String, onResult: (Double?, Double?) -> Unit) {
         lifecycleScope.launch {
@@ -246,7 +251,7 @@ class CrearSesionFragment : Fragment(R.layout.fragment_crear_sesion) {
         latitud: Double,
         longitud: Double,
         entrenamientoId: Int,
-        imagenUrl: String?
+        imagenId: Int? // ✅ Ahora pasamos el ID de la imagen
     ) {
         lifecycleScope.launch {
             val token = requireContext().getSharedPreferences("prefs", Context.MODE_PRIVATE)
@@ -262,16 +267,19 @@ class CrearSesionFragment : Fragment(R.layout.fragment_crear_sesion) {
                     entrenamiento = entrenamientoId,
                     jugadores = selectedJugadorIds,
                     entrenador = entrenadorPersonaId ?: return@launch,
-                    sesionPicture = imagenUrl // Agregamos la imagen aquí
+                    sesionpicture = imagenId // ✅ Enviamos directamente el ID
                 )
             )
 
-            RetrofitInstance.api.createSesion("Bearer $token", request)
+            println("📌 Enviando sesión con imagen ID: $request") // ✅ Log para verificar
+
+            val response = RetrofitInstance.api.createSesion("Bearer $token", request)
+            println("✅ Sesión creada: ${response}") // ✅ Log para verificar que Strapi lo recibe bien
+
             Toast.makeText(requireContext(), "Sesión creada exitosamente.", Toast.LENGTH_SHORT).show()
             findNavController().navigate(R.id.sesionesFragment)
         }
     }
-
 
     override fun onDestroyView() {
         super.onDestroyView()
