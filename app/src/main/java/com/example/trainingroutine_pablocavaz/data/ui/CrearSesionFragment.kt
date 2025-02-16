@@ -28,6 +28,10 @@ import com.example.trainingroutine_pablocavaz.data.remote.models.CrearSesionData
 import com.example.trainingroutine_pablocavaz.databinding.FragmentCrearSesionBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.coroutines.launch
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import java.io.File
 
 class CrearSesionFragment : Fragment(R.layout.fragment_crear_sesion) {
 
@@ -41,6 +45,8 @@ class CrearSesionFragment : Fragment(R.layout.fragment_crear_sesion) {
 
     private val CAMERA_REQUEST_CODE = 100
     private val GALLERY_REQUEST_CODE = 200
+    private var imageUri: Uri? = null
+
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -88,15 +94,57 @@ class CrearSesionFragment : Fragment(R.layout.fragment_crear_sesion) {
             when (requestCode) {
                 CAMERA_REQUEST_CODE -> {
                     val imageBitmap = data?.extras?.get("data") as Bitmap
-                    binding.imageViewSesion.setImageBitmap(imageBitmap)
+                    val tempUri = getImageUri(requireContext(), imageBitmap)
+                    imageUri = tempUri
+                    binding.imageViewSesion.setImageURI(tempUri)
                 }
                 GALLERY_REQUEST_CODE -> {
-                    val imageUri: Uri? = data?.data
+                    imageUri = data?.data
                     binding.imageViewSesion.setImageURI(imageUri)
                 }
             }
         }
     }
+
+    // Convierte el Bitmap en un Uri temporal
+    private fun getImageUri(context: Context, bitmap: Bitmap): Uri {
+        val path = MediaStore.Images.Media.insertImage(context.contentResolver, bitmap, "TempImage", null)
+        return Uri.parse(path)
+    }
+
+
+    private suspend fun subirImagenAStrapi(): String? {
+        if (imageUri == null) return null
+
+        val token = requireContext().getSharedPreferences("prefs", Context.MODE_PRIVATE)
+            .getString("token", null) ?: return null
+
+        val file = File(getRealPathFromUri(requireContext(), imageUri!!))
+        val requestFile = file.asRequestBody("image/*".toMediaTypeOrNull())
+        val body = MultipartBody.Part.createFormData("files", file.name, requestFile)
+
+        return try {
+            val response = RetrofitInstance.api.uploadImage("Bearer $token", body)
+            response.firstOrNull()?.url // Devolvemos la URL de la imagen subida
+        } catch (e: Exception) {
+            Toast.makeText(requireContext(), "Error al subir la imagen", Toast.LENGTH_SHORT).show()
+            null
+        }
+    }
+
+    // Obtiene la ruta real del archivo desde un Uri
+    private fun getRealPathFromUri(context: Context, uri: Uri): String {
+        var result = ""
+        val cursor = context.contentResolver.query(uri, null, null, null, null)
+        cursor?.use {
+            if (it.moveToFirst()) {
+                val idx = it.getColumnIndex(MediaStore.Images.ImageColumns.DATA)
+                if (idx >= 0) result = it.getString(idx)
+            }
+        }
+        return result
+    }
+
 
     private fun loadEntrenadorId() {
         val token = requireContext().getSharedPreferences("prefs", Context.MODE_PRIVATE)
@@ -169,12 +217,16 @@ class CrearSesionFragment : Fragment(R.layout.fragment_crear_sesion) {
 
         obtenerCoordenadas(direccion) { latitud, longitud ->
             if (latitud != null && longitud != null) {
-                enviarSesion(nombreSesion, estadoSesion, direccion, latitud, longitud, entrenamientoId)
+                lifecycleScope.launch {
+                    val imageUrl = subirImagenAStrapi() // Subimos la imagen primero
+                    enviarSesion(nombreSesion, estadoSesion, direccion, latitud, longitud, entrenamientoId, imageUrl)
+                }
             } else {
                 Toast.makeText(requireContext(), "No se pudo obtener las coordenadas.", Toast.LENGTH_SHORT).show()
             }
         }
     }
+
 
     private fun obtenerCoordenadas(direccion: String, onResult: (Double?, Double?) -> Unit) {
         lifecycleScope.launch {
@@ -193,7 +245,8 @@ class CrearSesionFragment : Fragment(R.layout.fragment_crear_sesion) {
         direccion: String,
         latitud: Double,
         longitud: Double,
-        entrenamientoId: Int
+        entrenamientoId: Int,
+        imagenUrl: String?
     ) {
         lifecycleScope.launch {
             val token = requireContext().getSharedPreferences("prefs", Context.MODE_PRIVATE)
@@ -208,7 +261,8 @@ class CrearSesionFragment : Fragment(R.layout.fragment_crear_sesion) {
                     longitud = longitud,
                     entrenamiento = entrenamientoId,
                     jugadores = selectedJugadorIds,
-                    entrenador = entrenadorPersonaId ?: return@launch
+                    entrenador = entrenadorPersonaId ?: return@launch,
+                    sesionPicture = imagenUrl // Agregamos la imagen aquí
                 )
             )
 
@@ -217,6 +271,7 @@ class CrearSesionFragment : Fragment(R.layout.fragment_crear_sesion) {
             findNavController().navigate(R.id.sesionesFragment)
         }
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()
