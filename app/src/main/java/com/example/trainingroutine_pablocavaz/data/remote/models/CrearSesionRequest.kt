@@ -12,5 +12,6 @@ data class CrearSesionData(
     val entrenador: Int,
     val direccion: String,
     val latitud: Double,
-    val longitud: Double
-)
+    val longitud: Double,
+
+    )

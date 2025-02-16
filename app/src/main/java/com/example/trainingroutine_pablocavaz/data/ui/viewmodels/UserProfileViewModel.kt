@@ -38,7 +38,7 @@ class UserProfileViewModel : ViewModel() {
                     "files", imageFile.name, imageFile.asRequestBody("image/*".toMediaTypeOrNull())
                 )
 
-                RetrofitInstance.api.uploadProfileImage("Bearer $token", body)
+                RetrofitInstance.api.uploadImage("Bearer $token", body)
                     .firstOrNull()?.let { uploadedImage ->
                         RetrofitInstance.api.updatePersonaProfileImage(
                             "Bearer $token", personaId,

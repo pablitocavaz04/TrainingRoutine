@@ -77,7 +77,7 @@ interface ApiService {
 
     @Multipart
     @POST("/api/upload")
-    suspend fun uploadProfileImage(
+    suspend fun uploadImage(
         @Header("Authorization") token: String,
         @Part image: MultipartBody.Part
     ): List<UploadResponse>
