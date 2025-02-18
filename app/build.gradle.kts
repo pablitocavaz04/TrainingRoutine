@@ -94,6 +94,12 @@ dependencies {
     implementation(libs.androidx.camera.extensions)
     //Maps
     implementation (libs.play.services.maps)
+    //Worker Manager
+    // WorkManager con Hilt
+    implementation(libs.androidx.work.runtime.ktx)
+    // Si usas Hilt con WorkManager
+    implementation(libs.androidx.hilt.work.v100)
+    kapt(libs.androidx.hilt.compiler.v100)
 }
 
 secrets {

@@ -1,11 +1,15 @@
 package com.example.trainingroutine_pablocavaz.data.ui
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.Context
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.app.NotificationCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -71,35 +75,70 @@ class SesionesFragment : Fragment() {
     private fun fetchSesiones(token: String, userId: Int) {
         lifecycleScope.launch {
             try {
-                val sesionesResponse = if (userRole == "Entrenador") {
-                    RetrofitInstance.api.getSesionesCreadas(
-                        "Bearer $token",
-                        userId
-                    )
-                } else {
-                    RetrofitInstance.api.getSesionesAsignadas(
-                        "Bearer $token",
-                        userId
-                    )
+                val sesionesResponse = when (userRole) {
+                    "Entrenador" -> RetrofitInstance.api.getSesionesCreadas("Bearer $token", userId)
+                    else -> RetrofitInstance.api.getSesionesAsignadas("Bearer $token", userId)
                 }
 
-                if (sesionesResponse.data.isNotEmpty()) {
-                    val sesiones = sesionesResponse.data.map { it.attributes }
-                    recyclerView.adapter = SesionAdapter(sesiones)
-                    recyclerView.layoutManager = LinearLayoutManager(requireContext())
-                } else {
-                    Toast.makeText(requireContext(), "No hay sesiones disponibles.", Toast.LENGTH_SHORT).show()
+                val sesiones = sesionesResponse.data.map { it.attributes }
+
+                val sharedPreferences = requireContext().getSharedPreferences("prefs", Context.MODE_PRIVATE)
+                val sesionesVistasSet = sharedPreferences.getStringSet("sesiones_vistas", emptySet()) ?: emptySet()
+
+                val sesionesActuales = sesiones.map { it.nombre }.toSet()
+                val nuevasSesiones = sesionesActuales - sesionesVistasSet
+
+                if (userRole == "Jugador" && nuevasSesiones.isNotEmpty() && sesionesVistasSet.isNotEmpty()) {
+                    mostrarNotificacionLocal(nuevasSesiones)
                 }
 
-            } catch (e: HttpException) {
-                println("HTTP EXCEPTION: ${e.message()}")
-                Toast.makeText(requireContext(), "Error al cargar las sesiones.", Toast.LENGTH_SHORT).show()
+                sharedPreferences.edit()
+                    .putStringSet("sesiones_vistas", sesionesActuales)
+                    .apply()
+
+                // 🔹 Configurar RecyclerView
+                recyclerView.apply {
+                    adapter = SesionAdapter(sesiones)
+                    layoutManager = LinearLayoutManager(requireContext())
+                }
+
             } catch (e: Exception) {
-                println("GENERAL EXCEPTION: ${e.message}")
-                Toast.makeText(requireContext(), "Error inesperado: ${e.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Error al cargar las sesiones.", Toast.LENGTH_SHORT).show()
             }
         }
     }
+
+
+    private fun mostrarNotificacionLocal(nuevasSesiones: Set<String>) {
+        val channelId = "new_sessions"
+        val notificationManager = requireContext().getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                channelId,
+                "Sesiones Asignadas",
+                NotificationManager.IMPORTANCE_HIGH
+            )
+            notificationManager.createNotificationChannel(channel)
+        }
+
+        val mensaje = if (nuevasSesiones.size == 1) {
+            "Tienes una nueva sesión: ${nuevasSesiones.first()}"
+        } else {
+            "Tienes ${nuevasSesiones.size} nuevas sesiones."
+        }
+
+        val notification = NotificationCompat.Builder(requireContext(), channelId)
+            .setSmallIcon(R.mipmap.ic_launcher) //Icono cambiado aquí al logo de la app
+            .setContentTitle("Nuevas Sesiones Asignadas")
+            .setContentText(mensaje)
+            .setStyle(NotificationCompat.BigTextStyle().bigText(mensaje))
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .build()
+
+        notificationManager.notify(2, notification)
+    }
+
 
 }
 //LOGS Y EXPECIONES CON IA

@@ -10,6 +10,7 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Toast
@@ -19,12 +20,17 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.work.Data
+import androidx.work.OneTimeWorkRequest
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import com.example.trainingroutine_pablocavaz.BuildConfig
 import com.example.trainingroutine_pablocavaz.R
 import com.example.trainingroutine_pablocavaz.data.remote.GoogleMapsRetrofitInstance
 import com.example.trainingroutine_pablocavaz.data.remote.RetrofitInstance
-import com.example.trainingroutine_pablocavaz.data.remote.models.CrearSesionRequest
 import com.example.trainingroutine_pablocavaz.data.remote.models.CrearSesionData
+import com.example.trainingroutine_pablocavaz.data.remote.models.CrearSesionRequest
+import com.example.trainingroutine_pablocavaz.data.workers.SessionNotificationWorker
 import com.example.trainingroutine_pablocavaz.databinding.FragmentCrearSesionBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.coroutines.launch
@@ -32,6 +38,7 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
+
 
 class CrearSesionFragment : Fragment(R.layout.fragment_crear_sesion) {
 
@@ -251,11 +258,12 @@ class CrearSesionFragment : Fragment(R.layout.fragment_crear_sesion) {
         latitud: Double,
         longitud: Double,
         entrenamientoId: Int,
-        imagenId: Int? // ✅ Ahora pasamos el ID de la imagen
+        imagenId: Int?
     ) {
         lifecycleScope.launch {
-            val token = requireContext().getSharedPreferences("prefs", Context.MODE_PRIVATE)
-                .getString("token", null)
+            val token = requireContext()
+                .getSharedPreferences("prefs", Context.MODE_PRIVATE)
+                .getString("token", null) ?: return@launch
 
             val request = CrearSesionRequest(
                 data = CrearSesionData(
@@ -265,20 +273,33 @@ class CrearSesionFragment : Fragment(R.layout.fragment_crear_sesion) {
                     latitud = latitud,
                     longitud = longitud,
                     entrenamiento = entrenamientoId,
-                    jugadores = selectedJugadorIds,
+                    jugadores = selectedJugadorIds, // ✅ IDs de `personas`
                     entrenador = entrenadorPersonaId ?: return@launch,
-                    sesionpicture = imagenId // ✅ Enviamos directamente el ID
+                    sesionpicture = imagenId
                 )
             )
 
-            println("📌 Enviando sesión con imagen ID: $request") // ✅ Log para verificar
+            RetrofitInstance.api.createSesion("Bearer $token", request)
 
-            val response = RetrofitInstance.api.createSesion("Bearer $token", request)
-            println("✅ Sesión creada: ${response}") // ✅ Log para verificar que Strapi lo recibe bien
+            // 🚀 Notificar jugadores en segundo plano
+            triggerSessionNotification(nombreSesion, selectedJugadorIds)
 
             Toast.makeText(requireContext(), "Sesión creada exitosamente.", Toast.LENGTH_SHORT).show()
             findNavController().navigate(R.id.sesionesFragment)
         }
+    }
+
+    private fun triggerSessionNotification(nombreSesion: String, jugadoresPersonaIds: List<Int>) {
+        val inputData = Data.Builder()
+            .putString("session_name", nombreSesion)
+            .putString("jugadores", jugadoresPersonaIds.joinToString(","))
+            .build()
+
+        WorkManager.getInstance(requireContext()).enqueue(
+            OneTimeWorkRequestBuilder<SessionNotificationWorker>()
+                .setInputData(inputData)
+                .build()
+        )
     }
 
     override fun onDestroyView() {
