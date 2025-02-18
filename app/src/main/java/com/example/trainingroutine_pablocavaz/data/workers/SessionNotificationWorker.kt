@@ -3,6 +3,7 @@ package com.example.trainingroutine_pablocavaz.data.workers
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
+import android.graphics.BitmapFactory
 import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
@@ -37,16 +38,21 @@ class SessionNotificationWorker(context: Context, params: WorkerParameters) : Wo
             notificationManager.createNotificationChannel(channel)
         }
 
+        val logoBitmap = BitmapFactory.decodeResource(applicationContext.resources, R.drawable.ic_notification)
+
         val jugadoresList = jugadorIds.split(",")
 
         for (jugadorId in jugadoresList) {
             val notificationId = jugadorId.hashCode()
 
             val notification = NotificationCompat.Builder(applicationContext, channelId)
-                .setSmallIcon(R.mipmap.ic_launcher) //Icono cambiado aquí al logo de la app
+                .setSmallIcon(R.drawable.ic_vibra)
+                .setLargeIcon(logoBitmap)
                 .setContentTitle("Nueva Sesión Asignada")
                 .setContentText("Te han asignado a la sesión: $sessionName")
+                .setStyle(NotificationCompat.BigTextStyle().bigText("Te han asignado a la sesión: $sessionName"))
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setDefaults(NotificationCompat.DEFAULT_VIBRATE)
                 .build()
 
             notificationManager.notify(notificationId, notification)

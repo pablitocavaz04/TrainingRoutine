@@ -3,6 +3,7 @@ package com.example.trainingroutine_pablocavaz.data.ui
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
+import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -122,6 +123,8 @@ class SesionesFragment : Fragment() {
             notificationManager.createNotificationChannel(channel)
         }
 
+        val logoBitmap = BitmapFactory.decodeResource(requireContext().resources, R.drawable.ic_notification)
+
         val mensaje = if (nuevasSesiones.size == 1) {
             "Tienes una nueva sesión: ${nuevasSesiones.first()}"
         } else {
@@ -129,16 +132,17 @@ class SesionesFragment : Fragment() {
         }
 
         val notification = NotificationCompat.Builder(requireContext(), channelId)
-            .setSmallIcon(R.mipmap.ic_launcher) //Icono cambiado aquí al logo de la app
+            .setSmallIcon(R.drawable.ic_vibra)
+            .setLargeIcon(logoBitmap)
             .setContentTitle("Nuevas Sesiones Asignadas")
             .setContentText(mensaje)
             .setStyle(NotificationCompat.BigTextStyle().bigText(mensaje))
             .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setDefaults(NotificationCompat.DEFAULT_VIBRATE)
             .build()
 
         notificationManager.notify(2, notification)
     }
-
 
 }
 //LOGS Y EXPECIONES CON IA
