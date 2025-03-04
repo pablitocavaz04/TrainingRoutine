@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     android:padding="16dp">
 
-    <!-- Imagen del usuario (marco más grande y centrado) -->
     <ImageView
         android:id="@+id/imagenJugadorImageView2"
         android:layout_width="215dp"
@@ -19,7 +18,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- Nombre del usuario (centrado y con estilo) -->
     <TextView
         android:id="@+id/userName"
         android:layout_width="wrap_content"
@@ -32,7 +30,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="16dp" />
 
-    <!-- Correo electrónico -->
     <TextView
         android:id="@+id/userEmail"
         android:layout_width="wrap_content"
@@ -44,7 +41,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="8dp" />
 
-    <!-- Rol del usuario -->
     <TextView
         android:id="@+id/userRole"
         android:layout_width="wrap_content"
@@ -56,7 +52,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="8dp" />
 
-    <!-- Botón de cerrar sesión -->
     <Button
         android:id="@+id/logoutButton"
         android:text="Cerrar Sesión"
@@ -67,7 +62,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/userRole" />
 
-    <!-- CAMERA botton-->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/floatingActionButtonCamera"
         android:layout_width="wrap_content"

@@ -30,7 +30,7 @@ data class  PerfilAttributes(
 )
 
 data class PerfilFormats(
-    val small: PerfilFormatDetails?
+    val thumbnail: PerfilFormatDetails?
 )
 
 data class PerfilFormatDetails(

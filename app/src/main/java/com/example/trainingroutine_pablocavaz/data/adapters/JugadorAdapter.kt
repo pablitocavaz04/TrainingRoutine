@@ -33,12 +33,14 @@ class JugadorAdapter(private val jugadores: List<PersonaResponseData>) :
         holder.nombreTextView.text = jugador.attributes.Rol
         holder.emailTextView.text = jugador.attributes.user?.data?.attributes?.email ?: "Email no disponible"
 
-        // Cargar imagen usando Coil
-        val imageUrl = jugador.attributes.perfil?.data?.attributes?.formats?.small?.url
+        val imageUrl = jugador.attributes.perfil?.data?.attributes?.url
+            ?: jugador.attributes.perfil?.data?.attributes?.formats?.thumbnail?.url
+
         holder.imagenImageView.load(imageUrl) {
             crossfade(true)
             placeholder(R.drawable.bmba)
         }
+
     }
 
     override fun getItemCount(): Int = jugadores.size

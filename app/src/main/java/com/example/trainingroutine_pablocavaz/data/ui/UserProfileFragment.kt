@@ -87,14 +87,17 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
                 val personaId = personaResponse.data.firstOrNull()?.id ?: -1
                 viewModel.setPersonaId(personaId)
 
-                val imageUrl = personaResponse.data.firstOrNull()?.attributes?.perfil?.data?.attributes?.formats?.small?.url
+                val imageUrl = personaResponse.data.firstOrNull()?.attributes?.perfil?.data?.attributes?.url
 
-                if (imageUrl != null) {
+                if (!imageUrl.isNullOrEmpty()) {
                     binding.imagenJugadorImageView2.load(imageUrl) {
                         crossfade(true)
                         placeholder(R.drawable.bmba)
                     }
+                } else {
+                    binding.imagenJugadorImageView2.setImageResource(R.drawable.bmba)
                 }
+
 
                 binding.userName.text = userDetailsResponse.username
                 binding.userEmail.text = userDetailsResponse.email
