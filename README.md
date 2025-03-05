@@ -54,7 +54,11 @@ Utiliza persistencia local con **Room** y sincronización remota con **Strapi**,
 - **Lottie**: Animaciones interactivas.  
 - **EncryptedSharedPreferences**: Manejo seguro de datos de usuario.  
 
----
+### ⏩ **Avances del segundo trimestre**
+   - Implementar AuthenticationInterceptor para añadir a los post en la cabecera el bearer token
+   - Implementación de ubicaciones con la Api de Google Maps
+   - Uso de camara para tomar fotos
+   - Work Manager para enviar notificaciones.
 
 ## 📂 **Estructura del Proyecto**
 ```plaintext
