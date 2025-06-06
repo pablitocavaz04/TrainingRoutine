@@ -8,13 +8,17 @@
         android:id="@+id/entrenamientosFragment"
         android:icon="@drawable/ic_trainings"
         android:title="Entrenamientos" />
-
-    <item android:id="@+id/mapsFragment"
+    <item
+        android:id="@+id/mapsFragment"
         android:icon="@drawable/ic_maps"
         android:title="Mapas"/>
-
     <item
         android:id="@+id/userProfileFragment"
         android:icon="@drawable/ic_user"
         android:title="Perfil" />
+
+    <item
+        android:id="@+id/aboutMeFragment"
+        android:icon="@drawable/ic_info"
+        android:title="Sobre mí" />
 </menu>

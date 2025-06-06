@@ -86,5 +86,10 @@
         android:name="com.example.trainingroutine_pablocavaz.data.ui.MapsFragment"
         android:label="Mapas" />
 
+    <!-- About Me -->
+    <fragment
+        android:id="@+id/aboutMeFragment"
+        android:name="com.example.trainingroutine_pablocavaz.data.ui.AboutMeFragment"
+        android:label="About Me"/>
 
 </navigation>
