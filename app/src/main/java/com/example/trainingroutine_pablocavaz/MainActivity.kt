@@ -1,6 +1,8 @@
 package com.example.trainingroutine_pablocavaz
 
 import android.os.Bundle
+import android.util.Log
+import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -10,6 +12,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
 import com.example.trainingroutine_pablocavaz.data.repository.EntrenamientoRepository
 import com.example.trainingroutine_pablocavaz.data.repository.PersonaRepository
@@ -20,6 +23,7 @@ import com.example.trainingroutine_pablocavaz.data.ui.viewmodels.SesionViewModel
 import com.example.trainingroutine_pablocavaz.data.ui.viewmodels.SharedViewModel
 import com.example.trainingroutine_pablocavaz.databinding.ActivityMainBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -64,23 +68,44 @@ class MainActivity : AppCompatActivity() {
         navController = navHostFragment.navController
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
+            Log.d("Navigation", "Fragment actual: ${destination.label} (${destination.id})")
             when (destination.id) {
                 R.id.splashFragment, R.id.loginFragment, R.id.registerFragment -> {
-                    bottomNavigationView.visibility = android.view.View.GONE
+                    bottomNavigationView.visibility = View.GONE
                 }
                 else -> {
-                    bottomNavigationView.visibility = android.view.View.VISIBLE
+                    bottomNavigationView.visibility = View.VISIBLE
                 }
             }
         }
 
         sharedViewModel.userRole.observe(this) { role ->
+            Log.d("MainActivity", "Rol detectado: $role")
             configureMenuBasedOnRole(role, bottomNavigationView)
+            bottomNavigationView.setupWithNavController(navController)
+
+            // Escuchar clics del botón "Más"
+            bottomNavigationView.setOnItemSelectedListener { item ->
+                when (item.itemId) {
+                    R.id.moreOptions -> {
+                        showMoreOptions()
+                        false
+                    }
+                    else -> {
+                        NavigationUI.onNavDestinationSelected(item, navController)
+                        true
+                    }
+                }
+            }
+
+            // Forzar navegación inicial
+            when (role) {
+                "Entrenador", "Jugador" -> {
+                    navController.navigate(R.id.sesionesFragment)
+                }
+            }
         }
 
-        bottomNavigationView.setupWithNavController(navController)
-
-        // Intentar sincronizar datos al iniciar la app
         sincronizarDatos()
     }
 
@@ -88,10 +113,30 @@ class MainActivity : AppCompatActivity() {
         bottomNavigationView.menu.clear()
         if (role == "Entrenador") {
             bottomNavigationView.inflateMenu(R.menu.navigation_coach_menu)
+            Log.d("MainActivity", "Menú de entrenador inflado")
         } else {
             bottomNavigationView.inflateMenu(R.menu.navigation_player_menu)
+            Log.d("MainActivity", "Menú de jugador inflado")
         }
-        bottomNavigationView.requestLayout() // Forzar redibujado del menú
+        bottomNavigationView.requestLayout()
+    }
+
+    private fun showMoreOptions() {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_more_options, null)
+        val bottomSheetDialog = BottomSheetDialog(this)
+        bottomSheetDialog.setContentView(dialogView)
+
+        dialogView.findViewById<View>(R.id.btn_profile).setOnClickListener {
+            bottomSheetDialog.dismiss()
+            navController.navigate(R.id.userProfileFragment)
+        }
+
+        dialogView.findViewById<View>(R.id.btn_about).setOnClickListener {
+            bottomSheetDialog.dismiss()
+            navController.navigate(R.id.aboutMeFragment)
+        }
+
+        bottomSheetDialog.show()
     }
 
     private fun sincronizarDatos() {
@@ -142,4 +187,3 @@ class MainActivity : AppCompatActivity() {
         }
     }
 }
-//Logs y Excepciones con IA

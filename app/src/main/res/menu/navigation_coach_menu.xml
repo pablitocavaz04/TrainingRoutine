@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/jugadoresFragment"
@@ -16,13 +15,9 @@
         android:id="@+id/mapsFragment"
         android:icon="@drawable/ic_maps"
         android:title="Mapas"/>
+    <!-- El nuevo botón + -->
     <item
-        android:id="@+id/userProfileFragment"
-        android:icon="@drawable/ic_user"
-        android:title="Perfil" />
-
-    <item
-        android:id="@+id/aboutMeFragment"
-        android:icon="@drawable/ic_info"
-        android:title="Sobre mí" />
+        android:id="@+id/moreOptions"
+        android:icon="@drawable/ic_more"
+        android:title="Más" />
 </menu>
